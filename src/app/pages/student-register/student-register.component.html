@@ -1,0 +1,64 @@
+<div class="student-register-page">
+  <div class="student-register-container">
+
+    <div class="logo-container">
+      <img src="images/logo.png" alt="Logo Konekt" class="student-register-logo" />
+    </div>
+
+    <h2 class="student-register-title">Registro de Estudiante</h2>
+
+    <form class="student-register-form">
+
+      <div class="form-group">
+        <label>Nombre completo</label>
+        <input type="text" placeholder="Tu nombre" />
+      </div>
+
+      <div class="form-group">
+        <label>Correo</label>
+        <input type="email" placeholder="correo@ejemplo.com" />
+      </div>
+
+      <div class="form-group">
+        <label>Universidad</label>
+        <input type="text" placeholder="Universidad" />
+      </div>
+
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          placeholder="********"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Confirmar contraseña</label>
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          placeholder="********"
+        />
+      </div>
+
+      <div class="show-password">
+        <input
+          type="checkbox"
+          id="showPassword"
+          [(ngModel)]="showPassword"
+          name="showPassword"
+        />
+        <label for="showPassword">Mostrar contraseña</label>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-register">Crear cuenta</button>
+
+        <button type="button" class="btn-login-back" (click)="goToLogin()">
+          Iniciar sesión
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>

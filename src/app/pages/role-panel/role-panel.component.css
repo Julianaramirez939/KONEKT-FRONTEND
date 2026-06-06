@@ -1,0 +1,121 @@
+.role-page {
+  min-height: 100vh;
+  background-color: #f4f6f9; /* mismo fondo login */
+  padding: 3rem 2rem;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* HEADER */
+.role-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.role-header h1 {
+  color: #0f172a;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.role-header p {
+  color: #64748b;
+  font-size: 1rem;
+}
+
+/* CONTAINER */
+.roles-container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+/* ITEM */
+.role-item {
+  width: 380px;
+}
+
+/* CARD (BASE LOGIN STYLE) */
+.role-card {
+  position: relative;
+  width: 100%;
+  height: 480px;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  border: none;
+
+  /* MISMA SOMBRA DEL LOGIN */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.12);
+
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* HOVER (AZUL REAL DEL LOGIN) */
+.role-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 0 18px rgba(37, 99, 235, 0.25);
+}
+
+/* IMAGEN */
+.card-image {
+  height: 300px;
+  overflow: hidden;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: top;
+}
+
+/* CONTENIDO */
+.card-content {
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.card-content h2 {
+  color: #0f172a;
+  font-size: 1.6rem;
+  margin: 0;
+}
+
+/* OVERLAY (usa azul oscuro consistente con login feel) */
+.card-hover-info {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.92);
+  color: #ffffff;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.role-card:hover .card-hover-info {
+  opacity: 1;
+}
+
+/* LISTA */
+.card-hover-info ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.card-hover-info li {
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.card-hover-info li:last-child {
+  margin-bottom: 0;
+}

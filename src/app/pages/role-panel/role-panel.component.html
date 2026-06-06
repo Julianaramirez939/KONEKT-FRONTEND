@@ -1,0 +1,78 @@
+<div class="role-page">
+  <div class="role-header">
+    <h1>Escoge tu rol</h1>
+    <p>Selecciona el perfil con el que deseas registrarte en Konekt.</p>
+  </div>
+
+  <div class="roles-container">
+    <!-- Estudiante -->
+    <div class="role-item">
+      <button class="role-card" type="button" (click)="goToStudentRegister()">
+        <div class="card-image">
+          <img src="images/estudiante.png" alt="Estudiante" />
+        </div>
+
+        <div class="card-content">
+          <h2>Estudiante</h2>
+
+          <div class="card-hover-info">
+            <ul>
+              <li>Acceso a oportunidades laborales.</li>
+              <li>Conexión con empresas aliadas.</li>
+              <li>Seguimiento de postulaciones.</li>
+              <li>Construcción de perfil profesional.</li>
+            </ul>
+          </div>
+        </div>
+      </button>
+    </div>
+
+    <!-- Empresa -->
+    <div class="role-item">
+      <button class="role-card" type="button" (click)="goToCompanyRegister()">
+        <div class="card-image">
+          <img src="images/empresario.png" alt="Empresa" />
+        </div>
+
+        <div class="card-content">
+          <h2>Empresa</h2>
+
+          <div class="card-hover-info">
+            <ul>
+              <li>Publicación de vacantes.</li>
+              <li>Búsqueda de talento universitario.</li>
+              <li>Gestión de candidatos.</li>
+              <li>Fortalecimiento de marca empleadora.</li>
+            </ul>
+          </div>
+        </div>
+      </button>
+    </div>
+
+    <!-- Universidad -->
+    <div class="role-item">
+      <button
+        class="role-card"
+        type="button"
+        (click)="goToUniversityRegister()"
+      >
+        <div class="card-image">
+          <img src="images/universidad.jpg" alt="Universidad" />
+        </div>
+
+        <div class="card-content">
+          <h2>Universidad</h2>
+
+          <div class="card-hover-info">
+            <ul>
+              <li>Seguimiento de egresados.</li>
+              <li>Vinculación con empresas.</li>
+              <li>Estadísticas de empleabilidad.</li>
+              <li>Impulso al ecosistema académico.</li>
+            </ul>
+          </div>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
