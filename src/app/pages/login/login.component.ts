@@ -110,7 +110,7 @@ export class LoginComponent {
     return this.loginForm.controls;
   }
   goToRegister(): void {
-    this.router.navigate(['/register']);
+    this.router.navigate(['/roles']);
   }
 
   goToForgotPassword(): void {

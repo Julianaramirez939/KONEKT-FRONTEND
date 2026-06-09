@@ -1,0 +1,15 @@
+import { User } from './user';
+
+export interface Company {
+  id: number;
+  name: string;
+  description: string;
+  nit: string;
+  industry: string;
+  address: string;
+  phone: string;
+  user: User;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}

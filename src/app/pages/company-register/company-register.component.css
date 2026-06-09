@@ -11,7 +11,7 @@
 /* CARD */
 .company-register-container {
   width: 100%;
-  max-width: 480px; /* 👈 IGUAL QUE ESTUDIANTE */
+  max-width: 480px;
   padding: 2rem;
   background-color: #fff;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.12);
@@ -36,7 +36,6 @@
   font-weight: 600;
 }
 
-/* FORM */
 .company-register-form {
   display: flex;
   flex-direction: column;
@@ -71,7 +70,6 @@ input:focus {
   outline: none;
 }
 
-/* SHOW PASSWORD */
 .show-password {
   display: flex;
   align-items: center;
@@ -127,4 +125,16 @@ input:focus {
 .btn-login-back:hover {
   background-color: #1d4ed8;
   transform: translateY(-1px);
+}
+.error-message {
+  display: block;
+  margin-top: 0.4rem;
+  color: #dc2626;
+  font-size: 0.85rem;
+}
+
+.btn-register:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
 }

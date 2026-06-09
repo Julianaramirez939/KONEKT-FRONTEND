@@ -1,69 +1,143 @@
 <div class="university-register-page">
   <div class="university-register-container">
-
     <div class="logo-container">
-      <img src="images/logo.png" alt="Logo Konekt" class="university-register-logo" />
+      <img src="images/logo.png" alt="Logo" class="university-register-logo" />
     </div>
 
     <h2 class="university-register-title">Registro de Universidad</h2>
 
-    <form class="university-register-form">
-
+    <form
+      class="university-register-form"
+      [formGroup]="registerForm"
+      (ngSubmit)="register()"
+    >
+      <!-- NAME -->
       <div class="form-group">
         <label>Nombre de la universidad</label>
-        <input type="text" placeholder="Universidad..." />
+        <input type="text" formControlName="name" />
+
+        @if (f["name"].touched && f["name"].hasError("required")) {
+          <small class="error-message">El nombre es obligatorio.</small>
+        }
       </div>
 
+      <!-- EMAIL -->
       <div class="form-group">
-        <label>Facultad / Área</label>
-        <input type="text" placeholder="Ingeniería, Administración..." />
+        <label>Correo electrónico</label>
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="correo@ejemplo.com"
+        />
+
+        @if (f["email"].touched && f["email"].hasError("required")) {
+          <small class="error-message">El correo es obligatorio.</small>
+        }
+
+        @if (f["email"].touched && f["email"].hasError("email")) {
+          <small class="error-message">Ingresa un correo válido.</small>
+        }
       </div>
 
+      <!-- NIT -->
       <div class="form-group">
-        <label>Nombre del responsable</label>
-        <input type="text" placeholder="Nombre del coordinador" />
+        <label>NIT</label>
+        <input type="text" formControlName="nit" />
+
+        @if (f["nit"].touched && f["nit"].hasError("required")) {
+          <small class="error-message">El NIT es obligatorio.</small>
+        }
       </div>
 
+      <!-- ADDRESS -->
       <div class="form-group">
-        <label>Correo institucional</label>
-        <input type="email" placeholder="coordinacion@uni.edu" />
+        <label>Dirección</label>
+        <input type="text" formControlName="address" />
+
+        @if (f["address"].touched && f["address"].hasError("required")) {
+          <small class="error-message">La dirección es obligatoria.</small>
+        }
       </div>
 
+      <!-- PHONE -->
+      <div class="form-group">
+        <label>Teléfono</label>
+        <input type="text" formControlName="phone" />
+
+        @if (f["phone"].touched && f["phone"].hasError("required")) {
+          <small class="error-message">El teléfono es obligatorio.</small>
+        }
+      </div>
+
+      <!-- PASSWORD -->
       <div class="form-group">
         <label>Contraseña</label>
+
         <input
           [type]="showPassword ? 'text' : 'password'"
-          placeholder="********"
+          formControlName="password"
         />
+        <div class="form-group">
+          <label>Confirmar contraseña</label>
+
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="confirmPassword"
+          />
+
+          @if (
+            f["confirmPassword"].touched &&
+            f["confirmPassword"].hasError("required")
+          ) {
+            <small class="error-message">La confirmación es obligatoria.</small>
+          }
+
+          @if (
+            registerForm.hasError("passwordMismatch") &&
+            f["confirmPassword"].touched
+          ) {
+            <small class="error-message">Las contraseñas no coinciden.</small>
+          }
+        </div>
+
+        @if (f["password"].touched && f["password"].hasError("required")) {
+          <small class="error-message">La contraseña es obligatoria.</small>
+        }
+
+        @if (f["password"].touched && f["password"].hasError("minlength")) {
+          <small class="error-message"
+            >La contraseña debe tener mínimo 8 caracteres.</small
+          >
+        }
+
+        @if (f["password"].touched && f["password"].hasError("pattern")) {
+          <small class="error-message">
+            Debe contener una mayúscula, una minúscula, un número y un carácter
+            especial.
+          </small>
+        }
       </div>
 
-      <div class="form-group">
-        <label>Confirmar contraseña</label>
-        <input
-          [type]="showPassword ? 'text' : 'password'"
-          placeholder="********"
-        />
-      </div>
-
+      <!-- CHECKBOX (FINAL) -->
       <div class="show-password">
-        <input
-          type="checkbox"
-          id="showPassword"
-          [(ngModel)]="showPassword"
-          name="showPassword"
-        />
-        <label for="showPassword">Mostrar contraseña</label>
+        <input type="checkbox" (change)="togglePassword()" />
+        <label>Mostrar contraseña</label>
       </div>
 
+      <!-- BUTTONS -->
       <div class="form-actions">
-        <button type="submit" class="btn-register">Registrar universidad</button>
+        <button
+          type="submit"
+          class="btn-register"
+          [disabled]="registerForm.invalid"
+        >
+          Crear cuenta
+        </button>
 
         <button type="button" class="btn-login-back" (click)="goToLogin()">
           Iniciar sesión
         </button>
       </div>
-
     </form>
-
   </div>
 </div>

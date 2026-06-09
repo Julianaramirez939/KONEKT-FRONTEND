@@ -1,69 +1,166 @@
 <div class="company-register-page">
   <div class="company-register-container">
-
     <div class="logo-container">
-      <img src="images/logo.png" alt="Logo Konekt" class="company-register-logo" />
+      <img
+        src="images/logo.png"
+        alt="Logo Konekt"
+        class="company-register-logo"
+      />
     </div>
 
     <h2 class="company-register-title">Registro de Empresa</h2>
 
-    <form class="company-register-form">
-
+    <form
+      class="company-register-form"
+      [formGroup]="registerForm"
+      (ngSubmit)="register()"
+    >
+      <!-- NAME -->
       <div class="form-group">
         <label>Nombre de la empresa</label>
-        <input type="text" placeholder="Nombre de la empresa" />
+        <input type="text" formControlName="name" />
+
+        @if (f["name"].touched && f["name"].hasError("required")) {
+          <small class="error-message">El nombre es obligatorio.</small>
+        }
       </div>
 
+      <!-- EMAIL -->
       <div class="form-group">
-        <label>Correo corporativo</label>
-        <input type="email" placeholder="empresa@correo.com" />
+        <label>Correo electrónico</label>
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="correo@ejemplo.com"
+        />
+
+        @if (f["email"].touched && f["email"].hasError("required")) {
+          <small class="error-message">El correo es obligatorio.</small>
+        }
+
+        @if (f["email"].touched && f["email"].hasError("email")) {
+          <small class="error-message">Ingresa un correo válido.</small>
+        }
       </div>
 
+      <!-- INDUSTRY -->
       <div class="form-group">
-        <label>Sector</label>
-        <input type="text" placeholder="Tecnología, Finanzas, etc." />
+        <label>Industria</label>
+
+        <ng-select
+          [items]="industries"
+          placeholder="Seleccione una industria"
+          formControlName="industry"
+        >
+        </ng-select>
+
+        @if (f["industry"].touched && f["industry"].hasError("required")) {
+          <small class="error-message"> La industria es obligatoria. </small>
+        }
       </div>
 
+      <!-- DESCRIPTION -->
       <div class="form-group">
-        <label>Nombre del contacto</label>
-        <input type="text" placeholder="Nombre del responsable" />
+        <label>Descripción</label>
+        <input type="text" formControlName="description" />
       </div>
 
+      <!-- NIT -->
+      <div class="form-group">
+        <label>NIT</label>
+        <input type="text" formControlName="nit" />
+
+        @if (f["nit"].touched && f["nit"].hasError("required")) {
+          <small class="error-message">El NIT es obligatorio.</small>
+        }
+      </div>
+
+      <!-- ADDRESS -->
+      <div class="form-group">
+        <label>Dirección</label>
+        <input type="text" formControlName="address" />
+
+        @if (f["address"].touched && f["address"].hasError("required")) {
+          <small class="error-message">La dirección es obligatoria.</small>
+        }
+      </div>
+
+      <!-- PHONE -->
+      <div class="form-group">
+        <label>Teléfono</label>
+        <input type="text" formControlName="phone" />
+
+        @if (f["phone"].touched && f["phone"].hasError("required")) {
+          <small class="error-message">El teléfono es obligatorio.</small>
+        }
+      </div>
+
+      <!-- PASSWORD -->
       <div class="form-group">
         <label>Contraseña</label>
+
         <input
           [type]="showPassword ? 'text' : 'password'"
-          placeholder="********"
+          formControlName="password"
         />
-      </div>
 
+        @if (f["password"].touched && f["password"].hasError("required")) {
+          <small class="error-message">La contraseña es obligatoria.</small>
+        }
+
+        @if (f["password"].touched && f["password"].hasError("minlength")) {
+          <small class="error-message">Mínimo 8 caracteres.</small>
+        }
+
+        @if (f["password"].touched && f["password"].hasError("pattern")) {
+          <small class="error-message">
+            Debe incluir mayúscula, minúscula, número y carácter especial.
+          </small>
+        }
+      </div>
+      <!-- CONFIRM PASSWORD -->
       <div class="form-group">
         <label>Confirmar contraseña</label>
+
         <input
           [type]="showPassword ? 'text' : 'password'"
-          placeholder="********"
+          formControlName="confirmPassword"
         />
-      </div>
 
+        @if (
+          f["confirmPassword"].touched &&
+          f["confirmPassword"].hasError("required")
+        ) {
+          <small class="error-message">Confirma la contraseña.</small>
+        }
+
+        @if (
+          registerForm.hasError("passwordMismatch") &&
+          f["confirmPassword"].touched
+        ) {
+          <small class="error-message">Las contraseñas no coinciden.</small>
+        }
+      </div>
+      <!-- CHECKBOX -->
       <div class="show-password">
-        <input
-          type="checkbox"
-          id="showPassword"
-          [(ngModel)]="showPassword"
-          name="showPassword"
-        />
-        <label for="showPassword">Mostrar contraseña</label>
+        <input type="checkbox" (change)="togglePassword()" />
+        <label>Mostrar contraseña</label>
       </div>
 
+      <!-- BUTTONS -->
       <div class="form-actions">
-        <button type="submit" class="btn-register">Registrar empresa</button>
+        <button
+          type="submit"
+          class="btn-register"
+          [disabled]="registerForm.invalid"
+        >
+          Crear cuenta
+        </button>
 
         <button type="button" class="btn-login-back" (click)="goToLogin()">
           Iniciar sesión
         </button>
       </div>
-
     </form>
-
   </div>
 </div>

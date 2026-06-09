@@ -1,64 +1,201 @@
 <div class="student-register-page">
   <div class="student-register-container">
-
     <div class="logo-container">
-      <img src="images/logo.png" alt="Logo Konekt" class="student-register-logo" />
+      <img
+        src="images/logo.png"
+        alt="Logo Konekt"
+        class="student-register-logo"
+      />
     </div>
 
     <h2 class="student-register-title">Registro de Estudiante</h2>
 
-    <form class="student-register-form">
-
+    <form
+      class="student-register-form"
+      [formGroup]="registerForm"
+      (ngSubmit)="register()"
+    >
+      <!-- FULL NAME -->
       <div class="form-group">
         <label>Nombre completo</label>
-        <input type="text" placeholder="Tu nombre" />
+
+        <input type="text" formControlName="fullName" />
+
+        @if (f["fullName"].touched && f["fullName"].hasError("required")) {
+          <small class="error-message"> El nombre es obligatorio. </small>
+        }
       </div>
 
+      <!-- EMAIL -->
       <div class="form-group">
-        <label>Correo</label>
-        <input type="email" placeholder="correo@ejemplo.com" />
+        <label>Correo electrónico</label>
+
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="correo@ejemplo.com"
+        />
+
+        @if (f["email"].touched && f["email"].hasError("required")) {
+          <small class="error-message"> El correo es obligatorio. </small>
+        }
+
+        @if (f["email"].touched && f["email"].hasError("email")) {
+          <small class="error-message"> Correo inválido. </small>
+        }
       </div>
 
+      <!-- DOCUMENT -->
+      <div class="form-group">
+        <label>Número de documento</label>
+
+        <input type="text" formControlName="documentNumber" />
+
+        @if (
+          f["documentNumber"].touched &&
+          f["documentNumber"].hasError("required")
+        ) {
+          <small class="error-message"> El documento es obligatorio. </small>
+        }
+      </div>
+
+      <!-- PHONE -->
+      <div class="form-group">
+        <label>Teléfono</label>
+
+        <input type="text" formControlName="phone" />
+
+        @if (f["phone"].touched && f["phone"].hasError("required")) {
+          <small class="error-message"> El teléfono es obligatorio. </small>
+        }
+      </div>
+
+      <!-- CAREER -->
+      <div class="form-group">
+        <label>Carrera</label>
+
+        <ng-select
+          [items]="careers"
+          placeholder="Seleccione una carrera"
+          formControlName="career"
+        >
+        </ng-select>
+
+        @if (f["career"].touched && f["career"].hasError("required")) {
+          <small class="error-message"> La carrera es obligatoria. </small>
+        }
+      </div>
+
+      <!-- UNIVERSITY -->
       <div class="form-group">
         <label>Universidad</label>
-        <input type="text" placeholder="Universidad" />
+
+        <ng-select
+          [items]="universities"
+          bindLabel="name"
+          bindValue="id"
+          placeholder="Seleccione una universidad"
+          formControlName="universityId"
+        >
+        </ng-select>
+
+        @if (
+          f["universityId"].touched && f["universityId"].hasError("required")
+        ) {
+          <small class="error-message"> La universidad es obligatoria. </small>
+        }
       </div>
 
+      <!-- SEMESTER -->
+      <div class="form-group">
+        <label>Semestre</label>
+
+        <input type="number" formControlName="semester" />
+
+        @if (f["semester"].touched && f["semester"].hasError("required")) {
+          <small class="error-message"> El semestre es obligatorio. </small>
+        }
+      </div>
+
+      <!-- ABOUT -->
+      <div class="form-group">
+        <label>Acerca de mí</label>
+
+        <textarea rows="4" formControlName="about"></textarea>
+
+        @if (f["about"].touched && f["about"].hasError("required")) {
+          <small class="error-message"> Este campo es obligatorio. </small>
+        }
+      </div>
+
+      <!-- PASSWORD -->
       <div class="form-group">
         <label>Contraseña</label>
+
         <input
           [type]="showPassword ? 'text' : 'password'"
-          placeholder="********"
+          formControlName="password"
         />
+
+        @if (f["password"].touched && f["password"].hasError("required")) {
+          <small class="error-message"> La contraseña es obligatoria. </small>
+        }
+
+        @if (f["password"].touched && f["password"].hasError("minlength")) {
+          <small class="error-message"> Mínimo 8 caracteres. </small>
+        }
+
+        @if (f["password"].touched && f["password"].hasError("pattern")) {
+          <small class="error-message">
+            Debe incluir mayúscula, minúscula, número y carácter especial.
+          </small>
+        }
       </div>
 
+      <!-- CONFIRM PASSWORD -->
       <div class="form-group">
         <label>Confirmar contraseña</label>
+
         <input
           [type]="showPassword ? 'text' : 'password'"
-          placeholder="********"
+          formControlName="confirmPassword"
         />
+
+        @if (
+          f["confirmPassword"].touched &&
+          f["confirmPassword"].hasError("required")
+        ) {
+          <small class="error-message"> Confirma la contraseña. </small>
+        }
+
+        @if (
+          registerForm.hasError("passwordMismatch") &&
+          f["confirmPassword"].touched
+        ) {
+          <small class="error-message"> Las contraseñas no coinciden. </small>
+        }
       </div>
 
+      <!-- SHOW PASSWORD -->
       <div class="show-password">
-        <input
-          type="checkbox"
-          id="showPassword"
-          [(ngModel)]="showPassword"
-          name="showPassword"
-        />
-        <label for="showPassword">Mostrar contraseña</label>
+        <input type="checkbox" (change)="togglePassword()" />
+        <label>Mostrar contraseña</label>
       </div>
 
+      <!-- BUTTONS -->
       <div class="form-actions">
-        <button type="submit" class="btn-register">Crear cuenta</button>
+        <button
+          type="submit"
+          class="btn-register"
+          [disabled]="registerForm.invalid"
+        >
+          Crear cuenta
+        </button>
 
         <button type="button" class="btn-login-back" (click)="goToLogin()">
           Iniciar sesión
         </button>
       </div>
-
     </form>
-
   </div>
 </div>

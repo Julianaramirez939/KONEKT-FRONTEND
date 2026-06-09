@@ -8,7 +8,7 @@
   padding: 1rem;
 }
 
-/* MISMO TAMAÑO QUE LOS DEMÁS */
+/* CONTENEDOR */
 .university-register-container {
   width: 100%;
   max-width: 480px;
@@ -62,7 +62,7 @@ input {
   border-radius: 7px;
   font-size: 1rem;
   box-sizing: border-box;
-  transition: 0.3s;
+  transition: all 0.3s ease;
 }
 
 input:focus {
@@ -103,7 +103,7 @@ input:focus {
   font-weight: 600;
   cursor: pointer;
   background-color: #10b981;
-  transition: 0.25s;
+  transition: all 0.25s ease;
 }
 
 .btn-register:hover {
@@ -111,6 +111,11 @@ input:focus {
   transform: translateY(-1px);
 }
 
+.btn-register:active {
+  transform: translateY(0);
+}
+
+/* BOTÓN LOGIN BACK */
 .btn-login-back {
   width: 100%;
   padding: 0.85rem;
@@ -121,10 +126,36 @@ input:focus {
   font-weight: 600;
   cursor: pointer;
   background-color: #2563eb;
-  transition: 0.25s;
+  transition: all 0.25s ease;
 }
 
 .btn-login-back:hover {
   background-color: #1d4ed8;
   transform: translateY(-1px);
+}
+
+.btn-login-back:active {
+  transform: translateY(0);
+}
+
+/* ❌ ERRORES (IGUAL LOGIN) */
+.error-message {
+  display: block;
+  margin-top: 0.4rem;
+  color: #dc2626;
+  font-size: 0.85rem;
+}
+
+/* 🚫 DISABLED BUTTON (IGUAL LOGIN) */
+.btn-register:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* OPCIONAL: DISABLED LOGIN BACK SI LO USAS */
+.btn-login-back:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
 }
