@@ -14,7 +14,7 @@ export class VacanciesService {
   private readonly endpoint = `${API_URL}/vacancie`;
 
   constructor(private http: HttpClient) {}
-
+  
   private getHeaders(): HttpHeaders {
     const token = sessionStorage.getItem('token');
 
