@@ -25,12 +25,13 @@ import { StudentRegisterRequest } from '../../interfaces/student-register-reques
 })
 export class StudentRegisterComponent implements OnInit {
   showPassword = false;
-
   registerForm: FormGroup;
-
   universities: University[] = [];
-
- careers: string[] = [];
+  page = 1;
+  perPage = 10;
+  loading = false;
+  hasMore = true;
+  careers: string[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -49,7 +50,7 @@ export class StudentRegisterComponent implements OnInit {
             Validators.required,
             Validators.minLength(8),
             Validators.pattern(
-              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.#_\-])[A-Za-z\d@$!%*?&.#_\-]{8,}$/
+              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.#_\-])[A-Za-z\d@$!%*?&.#_\-]{8,}$/,
             ),
           ],
         ],
@@ -78,31 +79,51 @@ export class StudentRegisterComponent implements OnInit {
       },
     );
   }
-ngOnInit(): void {
-  this.loadUniversities();
-  this.loadCareers();
-}
+
+  ngOnInit(): void {
+    this.loadUniversities();
+    this.loadCareers();
+  }
 
   private loadUniversities(): void {
-    this.universityService.getUniversities().subscribe({
+    if (this.loading || !this.hasMore) return;
+
+    this.loading = true;
+
+    this.universityService.getUniversities(this.page, this.perPage).subscribe({
       next: (response) => {
-        this.universities = response.data;
+        const data = response?.data ?? [];
+
+        this.universities = [...this.universities, ...data];
+
+        if (data.length < this.perPage) {
+          this.hasMore = false;
+        }
+
+        this.page++;
+        this.loading = false;
       },
       error: (error) => {
         console.error('Error cargando universidades', error);
+        this.loading = false;
       },
     });
   }
+
+  onScrollEnd(): void {
+    this.loadUniversities();
+  }
+
   private loadCareers(): void {
-  this.commonService.getConstants('career').subscribe({
-    next: (response) => {
-      this.careers = response;
-    },
-    error: (error) => {
-      console.error('Error cargando carreras', error);
-    },
-  });
-}
+    this.commonService.getConstants('career').subscribe({
+      next: (response) => {
+        this.careers = response;
+      },
+      error: (error) => {
+        console.error('Error cargando carreras', error);
+      },
+    });
+  }
 
   passwordMatchValidator(form: any) {
     const password = form.get('password')?.value;
@@ -133,73 +154,76 @@ ngOnInit(): void {
     return null;
   }
 
-register(): void {
-  if (this.registerForm.invalid) {
-    this.registerForm.markAllAsTouched();
-    return;
+  Studentregister(): void {
+    if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
+      return;
+    }
+
+    const data: StudentRegisterRequest = {
+      email: this.registerForm.value.email,
+      password: this.registerForm.value.password,
+      fullName: this.registerForm.value.fullName,
+      about: this.registerForm.value.about,
+      documentNumber: this.registerForm.value.documentNumber,
+      career: this.registerForm.value.career,
+      phone: this.registerForm.value.phone,
+      semester: Number(this.registerForm.value.semester),
+      universityId: Number(this.registerForm.value.universityId),
+    };
+
+    Swal.fire({
+      title: 'Registrando estudiante...',
+      text: 'Por favor espera',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      customClass: {
+        popup: 'konekt-swal',
+      },
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    this.studentRegisterService.register(data).subscribe({
+      next: (response) => {
+        console.log('Register success', response);
+
+        Swal.fire({
+          icon: 'success',
+          title: '¡Registro exitoso!',
+          text: 'El estudiante fue creado correctamente.',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#2563eb',
+          customClass: {
+            popup: 'konekt-swal',
+          },
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.router.navigateByUrl('/');
+          }
+        });
+      },
+
+      error: (error) => {
+        console.error('Register error', error);
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text:
+            error?.error?.message ||
+            error?.message ||
+            'No se pudo registrar el estudiante.',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#2563eb',
+          customClass: {
+            popup: 'konekt-swal',
+          },
+        });
+      },
+    });
   }
-
-  const data: StudentRegisterRequest = {
-    email: this.registerForm.value.email,
-    password: this.registerForm.value.password,
-    fullName: this.registerForm.value.fullName,
-    about: this.registerForm.value.about,
-    documentNumber: this.registerForm.value.documentNumber,
-    career: this.registerForm.value.career,
-    phone: this.registerForm.value.phone,
-    semester: Number(this.registerForm.value.semester),
-    universityId: Number(this.registerForm.value.universityId),
-  };
-
-  Swal.fire({
-    title: 'Registrando estudiante...',
-    text: 'Por favor espera',
-    allowOutsideClick: false,
-    allowEscapeKey: false,
-    customClass: {
-      popup: 'konekt-swal',
-    },
-    didOpen: () => {
-      Swal.showLoading();
-    },
-  });
-
-  this.studentRegisterService.register(data).subscribe({
-    next: (response) => {
-      console.log('Register success', response);
-
-      Swal.fire({
-        icon: 'success',
-        title: '¡Registro exitoso!',
-        text: 'El estudiante fue creado correctamente.',
-        confirmButtonText: 'Continuar',
-        confirmButtonColor: '#2563eb',
-        customClass: {
-          popup: 'konekt-swal',
-        },
-      }).then(() => {
-        this.router.navigate(['/login']);
-      });
-    },
-
-    error: (error) => {
-      console.error('Register error', error);
-
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text:
-          error?.message ||
-          'No se pudo registrar el estudiante.',
-        confirmButtonText: 'Aceptar',
-        confirmButtonColor: '#2563eb',
-        customClass: {
-          popup: 'konekt-swal',
-        },
-      });
-    },
-  });
-}
 
   togglePassword(): void {
     this.showPassword = !this.showPassword;
@@ -211,5 +235,9 @@ register(): void {
 
   goToLogin(): void {
     this.router.navigate(['/']);
+  }
+
+  goToRoles(): void {
+    this.router.navigate(['/roles']);
   }
 }

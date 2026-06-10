@@ -15,6 +15,11 @@ import { ApplicationResponse } from '../../interfaces/application-response';
 })
 export class StudentApplicationComponent implements OnInit {
   applications: ApplicationResponse[] = [];
+  page = 1;
+  total = 0;
+  pageCount = 0;
+  hasNext = false;
+  hasPrev = false;
 
   constructor(private applicationsService: ApplicationsService) {}
 
@@ -23,12 +28,17 @@ export class StudentApplicationComponent implements OnInit {
   }
 
   loadApplications(): void {
-    this.applicationsService.getApplications().subscribe({
-      next: (response: any) => {
-        this.applications = response?.data ?? [];
+    this.applicationsService.getApplications(this.page).subscribe({
+      next: (response) => {
+        this.applications = response.data;
 
-        console.log('applications:', this.applications);
+        this.total = response.total;
+        this.page = response.page;
+        this.pageCount = response.page_count;
+        this.hasNext = response.has_next;
+        this.hasPrev = response.has_prev;
       },
+
       error: () => {
         Swal.fire({
           icon: 'error',
@@ -39,6 +49,30 @@ export class StudentApplicationComponent implements OnInit {
         });
       },
     });
+  }
+  nextPage(): void {
+    if (!this.hasNext) return;
+
+    this.page++;
+    this.loadApplications();
+  }
+
+  previousPage(): void {
+    if (!this.hasPrev) return;
+
+    this.page--;
+    this.loadApplications();
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.pageCount) return;
+
+    this.page = page;
+    this.loadApplications();
+  }
+
+  get pages(): number[] {
+    return Array.from({ length: this.pageCount }, (_, i) => i + 1);
   }
 
   deleteApplication(id: number): void {

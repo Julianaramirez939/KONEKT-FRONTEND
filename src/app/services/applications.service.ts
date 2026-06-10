@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { API_URL } from '../../global';
 
 import { ApplicationRequest } from '../interfaces/application-request';
 import { ApplicationResponse } from '../interfaces/application-response';
+import { ApplicationListResponse } from '../interfaces/application-list-response';
 
 @Injectable({
   providedIn: 'root',
@@ -45,18 +46,31 @@ export class ApplicationsService {
       );
   }
 
-  getApplications(): Observable<ApplicationResponse[]> {
-    return this.http
-      .get<ApplicationResponse[]>(this.endpoint, {
-        headers: this.getHeaders(),
-      })
-      .pipe(
-        catchError((error) => {
-          console.error('[ApplicationsService] getApplications error:', error);
-          return throwError(() => error);
-        }),
-      );
-  }
+ getApplications(
+  page: number = 1
+): Observable<ApplicationListResponse> {
+  const params = new HttpParams()
+    .set('page', page);
+
+  return this.http
+    .get<ApplicationListResponse>(this.endpoint, {
+      headers: this.getHeaders(),
+      params,
+    })
+    .pipe(
+      catchError((error) => {
+        console.error(
+          '[ApplicationsService] getApplications error:',
+          error,
+        );
+
+        return throwError(() => ({
+          message: 'Error fetching applications',
+          error,
+        }));
+      }),
+    );
+}
 
   getApplicationById(id: number): Observable<ApplicationResponse> {
     return this.http

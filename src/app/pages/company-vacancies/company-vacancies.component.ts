@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
@@ -24,13 +24,15 @@ registerLocaleData(localeEsCo, 'es-CO');
 })
 export class CompanyVacanciesComponent implements OnInit {
   vacancies: VacancieResponse[] = [];
-
-  // catálogos
   statuses: any[] = [];
   modalities: any[] = [];
+  page = 1;
+  total = 0;
+  pageCount = 0;
+  hasNext = false;
+  hasPrev = false;
 
   constructor(
-    private fb: FormBuilder,
     private vacanciesService: VacanciesService,
     private commonService: CommonService,
   ) {}
@@ -53,11 +55,15 @@ export class CompanyVacanciesComponent implements OnInit {
   }
 
   loadVacancies(): void {
-    this.vacanciesService.getVacancies().subscribe({
-      next: (data: any) => {
-        this.vacancies = Array.isArray(data)
-          ? data
-          : data?.vacancies || data?.data || [];
+    this.vacanciesService.getVacancies(this.page).subscribe({
+      next: (response) => {
+        this.vacancies = response.data;
+
+        this.total = response.total;
+        this.page = response.page;
+        this.pageCount = response.page_count;
+        this.hasNext = response.has_next;
+        this.hasPrev = response.has_prev;
       },
 
       error: () => {
@@ -73,7 +79,29 @@ export class CompanyVacanciesComponent implements OnInit {
       },
     });
   }
+  nextPage(): void {
+    if (!this.hasNext) return;
 
+    this.page++;
+    this.loadVacancies();
+  }
+
+  previousPage(): void {
+    if (!this.hasPrev) return;
+
+    this.page--;
+    this.loadVacancies();
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.pageCount) return;
+
+    this.page = page;
+    this.loadVacancies();
+  }
+  get pages(): number[] {
+    return Array.from({ length: this.pageCount }, (_, i) => i + 1);
+  }
   openCreateVacancyModal(): void {
     Swal.fire({
       title: `<span style="font-family:Segoe UI; font-weight:600;">Crear vacante</span>`,

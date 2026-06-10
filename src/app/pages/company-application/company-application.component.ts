@@ -17,12 +17,16 @@ import { ApplicationRequest } from '../../interfaces/application-request';
 })
 export class CompanyApplicationComponent implements OnInit {
   applications: ApplicationResponse[] = [];
-
+  page = 1;
+  total = 0;
+  pageCount = 0;
+  hasNext = false;
+  hasPrev = false;
   statuses: any[] = [];
 
   constructor(
     private applicationsService: ApplicationsService,
-    private commonService: CommonService
+    private commonService: CommonService,
   ) {}
 
   ngOnInit(): void {
@@ -36,34 +40,64 @@ export class CompanyApplicationComponent implements OnInit {
       error: (err) => console.error('Error statuses', err),
     });
   }
-
   loadApplications(): void {
-    this.applicationsService.getApplications().subscribe({
-      next: (data: any) => {
-        const all = Array.isArray(data) ? data : data?.data || [];
-        this.applications = all;
+    this.applicationsService.getApplications(this.page).subscribe({
+      next: (response) => {
+        this.applications = response.data;
+
+        this.total = response.total;
+        this.page = response.page;
+        this.pageCount = response.page_count;
+        this.hasNext = response.has_next;
+        this.hasPrev = response.has_prev;
       },
+
       error: () => {
         Swal.fire({
           icon: 'error',
           title: 'Error',
           text: 'No se pudieron cargar las postulaciones',
           confirmButtonColor: '#2563eb',
+          customClass: { popup: 'konekt-swal' },
         });
       },
     });
   }
+  nextPage(): void {
+    if (!this.hasNext) return;
 
-updateApplication(app: ApplicationResponse): void {
-  Swal.fire({
-    title: `<span style="font-family:Segoe UI; font-weight:600;">Actualizar postulación</span>`,
-    width: '650px',
-    showCloseButton: true,
-    customClass: {
-      popup: 'konekt-swal'
-    },
+    this.page++;
+    this.loadApplications();
+  }
 
-    html: `
+  previousPage(): void {
+    if (!this.hasPrev) return;
+
+    this.page--;
+    this.loadApplications();
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.pageCount) return;
+
+    this.page = page;
+    this.loadApplications();
+  }
+
+  get pages(): number[] {
+    return Array.from({ length: this.pageCount }, (_, i) => i + 1);
+  }
+
+  updateApplication(app: ApplicationResponse): void {
+    Swal.fire({
+      title: `<span style="font-family:Segoe UI; font-weight:600;">Actualizar postulación</span>`,
+      width: '650px',
+      showCloseButton: true,
+      customClass: {
+        popup: 'konekt-swal',
+      },
+
+      html: `
     <style>
       .swal-form {
         display: grid;
@@ -127,7 +161,7 @@ updateApplication(app: ApplicationResponse): void {
                 <option value="${s}" ${app.status === s ? 'selected' : ''}>
                   ${s}
                 </option>
-              `
+              `,
             )
             .join('')}
         </select>
@@ -143,68 +177,69 @@ updateApplication(app: ApplicationResponse): void {
     </div>
     `,
 
-    showCancelButton: true,
-    confirmButtonText: 'Actualizar',
-    cancelButtonText: 'Cancelar',
+      showCancelButton: true,
+      confirmButtonText: 'Actualizar',
+      cancelButtonText: 'Cancelar',
 
-    confirmButtonColor: '#2563eb',
-    cancelButtonColor: '#ef4444',
+      confirmButtonColor: '#2563eb',
+      cancelButtonColor: '#ef4444',
 
-    preConfirm: () => {
-      const status = (document.getElementById('status') as HTMLSelectElement).value;
+      preConfirm: () => {
+        const status = (document.getElementById('status') as HTMLSelectElement)
+          .value;
 
-      const companyComments = (
-        document.getElementById('companyComments') as HTMLTextAreaElement
-      ).value;
+        const companyComments = (
+          document.getElementById('companyComments') as HTMLTextAreaElement
+        ).value;
 
-      if (!status) {
-        Swal.showValidationMessage('El estado es obligatorio');
-        return false;
-      }
-
-      return {
-        status,
-        companyComments,
-      } as Partial<ApplicationRequest>;
-    },
-  }).then((result) => {
-    if (result.isConfirmed && result.value) {
-      Swal.fire({
-        title: 'Actualizando...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading(),
-        customClass: {
-          popup: 'konekt-swal'
+        if (!status) {
+          Swal.showValidationMessage('El estado es obligatorio');
+          return false;
         }
-      });
 
-      this.applicationsService
-        .updateApplication(app.id!, result.value)
-        .subscribe({
-          next: () => {
-            Swal.fire({
-              icon: 'success',
-              title: 'Actualizado',
-              confirmButtonColor: '#2563eb',
-              customClass: {
-                popup: 'konekt-swal'
-              }
-            });
-
-            this.loadApplications();
-          },
-          error: () => {
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: 'No se pudo actualizar la postulación',
-              customClass: {
-                popup: 'konekt-swal'
-              }
-            });
+        return {
+          status,
+          companyComments,
+        } as Partial<ApplicationRequest>;
+      },
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        Swal.fire({
+          title: 'Actualizando...',
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading(),
+          customClass: {
+            popup: 'konekt-swal',
           },
         });
-    }
-  });
-}
+
+        this.applicationsService
+          .updateApplication(app.id!, result.value)
+          .subscribe({
+            next: () => {
+              Swal.fire({
+                icon: 'success',
+                title: 'Actualizado',
+                confirmButtonColor: '#2563eb',
+                customClass: {
+                  popup: 'konekt-swal',
+                },
+              });
+
+              this.loadApplications();
+            },
+            error: () => {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo actualizar la postulación',
+                customClass: {
+                  popup: 'konekt-swal',
+                },
+              });
+            },
+          });
+      }
+    });
+  }
 }

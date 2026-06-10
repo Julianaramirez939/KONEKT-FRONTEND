@@ -21,7 +21,11 @@ registerLocaleData(localeEsCo, 'es-CO');
 })
 export class StudentVacanciesComponent implements OnInit {
   vacancies: VacancieResponse[] = [];
-
+page = 1;
+total = 0;
+pageCount = 0;
+hasNext = false;
+hasPrev = false;
   constructor(
     private vacanciesService: VacanciesService,
     private applicationsService: ApplicationsService,
@@ -31,27 +35,59 @@ export class StudentVacanciesComponent implements OnInit {
     this.loadVacancies();
   }
 
-  loadVacancies(): void {
-    this.vacanciesService.getVacancies().subscribe({
-      next: (data: any) => {
-        this.vacancies = Array.isArray(data)
-          ? data
-          : data?.vacancies || data?.data || [];
-      },
-      error: () => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'No se pudieron cargar las vacantes',
-          confirmButtonColor: '#2563eb',
-          customClass: { popup: 'konekt-swal' },
-        });
-      },
-    });
-  }
+loadVacancies(): void {
+  this.vacanciesService.getVacancies(this.page).subscribe({
+    next: (response: any) => {
+
+      this.vacancies = response.data;
+
+      this.total = response.total;
+      this.page = response.page;
+      this.pageCount = response.page_count;
+      this.hasNext = response.has_next;
+      this.hasPrev = response.has_prev;
+    },
+
+    error: () => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudieron cargar las vacantes',
+        confirmButtonColor: '#2563eb',
+        customClass: { popup: 'konekt-swal' },
+      });
+    },
+  });
+}
+nextPage(): void {
+  if (!this.hasNext) return;
+
+  this.page++;
+  this.loadVacancies();
+}
+
+previousPage(): void {
+  if (!this.hasPrev) return;
+
+  this.page--;
+  this.loadVacancies();
+}
+
+goToPage(page: number): void {
+  if (page < 1 || page > this.pageCount) return;
+
+  this.page = page;
+  this.loadVacancies();
+}
+
+get pages(): number[] {
+  return Array.from(
+    { length: this.pageCount },
+    (_, i) => i + 1
+  );
+}
 
   applyVacancy(vacancy: VacancieResponse): void {
-    const user = JSON.parse(sessionStorage.getItem('user') || '{}');
 
     Swal.fire({
       title: '¿Postularte a esta vacante?',

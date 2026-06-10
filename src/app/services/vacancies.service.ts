@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { API_URL } from '../../global';
 
 import { VacancieRequest } from '../interfaces/vacancie-request';
 import { VacancieResponse } from '../interfaces/vacancie-response';
+import { VacancieListResponse } from '../interfaces/vancancie-list-response';
 
 @Injectable({
   providedIn: 'root',
@@ -40,24 +41,28 @@ export class VacanciesService {
         }),
       );
   }
+getVacancies(
+  page: number = 1
+): Observable<VacancieListResponse> {
+  const params = new HttpParams()
+    .set('page', page);
 
-  getVacancies(): Observable<VacancieResponse[]> {
-    return this.http
-      .get<VacancieResponse[]>(this.endpoint, {
-        headers: this.getHeaders(),
-      })
-      .pipe(
-        catchError((error) => {
-          console.error('[VacanciesService] getVacancies error:', error);
+  return this.http
+    .get<VacancieListResponse>(this.endpoint, {
+      headers: this.getHeaders(),
+      params,
+    })
+    .pipe(
+      catchError((error) => {
+        console.error('[VacanciesService] getVacancies error:', error);
 
-          return throwError(() => ({
-            message: 'Error fetching vacancies',
-            error,
-          }));
-        }),
-      );
-  }
-
+        return throwError(() => ({
+          message: 'Error fetching vacancies',
+          error,
+        }));
+      }),
+    );
+}
   getVacancieById(id: number): Observable<VacancieResponse> {
     return this.http
       .get<VacancieResponse>(`${this.endpoint}/${id}`, {

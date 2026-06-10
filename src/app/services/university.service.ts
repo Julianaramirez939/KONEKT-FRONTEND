@@ -13,17 +13,9 @@ export class UniversityService {
 
   constructor(private http: HttpClient) {}
 
-  getUniversities(
-    page: number = 1,
-    perPage: number = 10,
-  ): Observable<UniversityListResponse> {
-    const params = new HttpParams()
-      .set('page', page)
-      .set('per_page', perPage);
+  getUniversities(page: number, perPage: number) {
+    let params = new HttpParams().set('page', page).set('per_page', perPage);
 
-    return this.http.get<UniversityListResponse>(
-      this.endpoint,
-      { params },
-    );
+    return this.http.get<UniversityListResponse>(this.endpoint, { params });
   }
 }
