@@ -1,0 +1,59 @@
+<app-navbar [role]="'student'"></app-navbar>
+
+<div class="vacancies-page">
+
+  <div class="list-container">
+
+    <h2 class="page-title">Vacantes disponibles</h2>
+
+    <div *ngIf="vacancies.length === 0" class="empty">
+      No hay vacantes disponibles
+    </div>
+
+    <div class="cards-grid">
+
+      <div *ngFor="let v of vacancies" class="card">
+
+        <h3>{{ v.title }}</h3>
+
+        <p class="description">{{ v.description }}</p>
+
+        <div class="info-grid">
+
+          <div>
+            <i class="fa-solid fa-coins"></i>
+            <b>Salario:</b>
+            {{ v.salary | currency:'COP':'symbol':'1.0-0':'es-CO' }}
+          </div>
+
+          <div>
+            <i class="fa-solid fa-location-dot"></i>
+            <b>Ubicación:</b> {{ v.location }}
+          </div>
+
+          <div>
+            <i class="fa-solid fa-briefcase"></i>
+            <b>Modalidad:</b> {{ v.modality }}
+          </div>
+
+          <div>
+            <i class="fa-solid fa-list-check"></i>
+            <b>Requisitos:</b> {{ v.requirements }}
+          </div>
+
+        </div>
+
+        <div class="actions">
+          <button class="btn-apply" (click)="applyVacancy(v)">
+            <i class="fa-solid fa-paper-plane"></i>
+            Postularme
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

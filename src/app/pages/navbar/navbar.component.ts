@@ -25,20 +25,20 @@ export class NavbarComponent implements OnChanges {
       case 'company':
         this.links = [
           { label: 'Vacantes', path: '/dashboard/company/vacancies' },
+          { label: 'Postulaciones', path: '/dashboard/company/applications' },
         ];
         break;
 
       case 'university':
         this.links = [
-          { label: 'Dashboard', path: '/university/dashboard' },
-          { label: 'Estudiantes', path: '/university/students' },
+          { label: 'Estudiantes', path: '/dashboard/university/students' },
         ];
         break;
 
       default:
         this.links = [
-          { label: 'Dashboard', path: '/student/dashboard' },
-          { label: 'Vacantes', path: '/student/jobs' },
+          { label: 'Vacantes', path: '/dashboard/student/vacancies' },
+          { label: 'Mis postulaciones', path: '/dashboard/student/applications' },
         ];
     }
   }

@@ -15,6 +15,9 @@ import { UniversityDashboardComponent } from './pages/university-dashboard/unive
 import { CompanyDashboardComponent } from './pages/company-dashboard/company-dashboard.component';
 
 import { CompanyVacanciesComponent } from './pages/company-vacancies/company-vacancies.component';
+import { StudentVacanciesComponent } from './pages/student-vacancies/student-vacancies.component';
+import { StudentApplicationComponent } from './pages/student-application/student-application.component';
+import { CompanyApplicationComponent } from './pages/company-application/company-application.component';
 
 export const routes: Routes = [
   {
@@ -72,6 +75,28 @@ export const routes: Routes = [
           {
             path: 'vacancies',
             component: CompanyVacanciesComponent,
+          },
+          {
+            path: 'applications',
+            component: CompanyApplicationComponent,
+          },
+        ],
+      },
+
+      {
+        path: 'student',
+        children: [
+          {
+            path: '',
+            component: StudentDashboardComponent,
+          },
+          {
+            path: 'vacancies',
+            component: StudentVacanciesComponent,
+          },
+          {
+            path: 'applications',
+            component: StudentApplicationComponent,
           },
         ],
       },

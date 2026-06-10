@@ -1,0 +1,65 @@
+<app-navbar [role]="'company'"></app-navbar>
+
+<div class="applications-page">
+  <h2 class="page-title">Postulaciones recibidas</h2>
+
+  <div *ngIf="applications.length === 0" class="empty">
+    No hay postulaciones aún
+  </div>
+
+  <div class="cards-grid">
+    <div *ngFor="let a of applications" class="card">
+      <h3>{{ a.vacancie.title }}</h3>
+
+      <p class="description">
+        {{ a.vacancie.description }}
+      </p>
+
+      <div class="info-grid">
+        <div>
+          <i class="fa-solid fa-user"></i>
+          <b>Estudiante:</b> {{ a.student.fullName }}
+        </div>
+
+        <div>
+          <i class="fa-solid fa-graduation-cap"></i>
+          <b>Carrera:</b> {{ a.student.career }}
+        </div>
+
+        <div>
+          <i class="fa-solid fa-building"></i>
+          <b>Universidad:</b> {{ a.student.university.name }}
+        </div>
+
+        <div>
+          <i class="fa-solid fa-calendar"></i>
+          <b>Fecha:</b>
+          {{ a.createdAt | date: "mediumDate" : "UTC" : "es-CO" }}
+          {{ a.createdAt | date: "shortTime" : "UTC" : "es-CO" }}
+        </div>
+
+        <div>
+          <i class="fa-solid fa-circle-info"></i>
+          <b>Estado:</b>
+
+          <span
+            [ngClass]="{
+              'status-activa': a.status === 'Activa',
+              'status-suspendida': a.status === 'Suspendida',
+              'status-cancelada': a.status === 'Cancelada',
+            }"
+          >
+            {{ a.status }}
+          </span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-update" (click)="updateApplication(a)">
+          <i class="fa-solid fa-pen-to-square"></i>
+          Actualizar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
