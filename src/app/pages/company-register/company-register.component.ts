@@ -100,7 +100,7 @@ export class CompanyRegisterComponent implements OnInit {
     return null;
   }
 
-  register(): void {
+  Companyregister(): void {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       return;

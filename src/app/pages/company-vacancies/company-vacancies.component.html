@@ -1,0 +1,79 @@
+<app-navbar [role]="'company'"></app-navbar>
+
+<div class="vacancies-page">
+  <!-- LIST -->
+  <div class="list-container">
+    <div class="header">
+      <h2 class="page-title">Vacantes</h2>
+
+      <button class="btn-create" (click)="openCreateVacancyModal()">
+        <i class="fa-solid fa-plus"></i>
+        Crear Vacante
+      </button>
+    </div>
+
+    <div *ngIf="vacancies.length === 0" class="empty">
+      No hay vacantes creadas aún
+    </div>
+
+    <div class="cards-grid">
+      <div *ngFor="let v of vacancies" class="card">
+        <!-- TITLE -->
+        <h3>{{ v.title }}</h3>
+
+        <!-- DESCRIPTION -->
+        <p class="description">{{ v.description }}</p>
+
+        <div class="info-grid">
+          <div>
+            <i class="fa-solid fa-coins"></i>
+            <b>Salario:</b>
+            {{ v.salary | currency: "COP" : "symbol" : "1.0-0" : "es-CO" }}
+          </div>
+
+          <div>
+            <i class="fa-solid fa-location-dot"></i>
+            <b>Ubicación:</b> {{ v.location }}
+          </div>
+
+          <div>
+            <i class="fa-solid fa-circle-info"></i>
+            <b>Estado:</b>
+            <span
+              [ngClass]="{
+                'status-activa': v.status === 'Activa',
+                'status-suspendida': v.status === 'Suspendida',
+                'status-cerrada': v.status === 'Cerrada',
+              }"
+            >
+              {{ v.status }}
+            </span>
+          </div>
+
+          <div>
+            <i class="fa-solid fa-briefcase"></i>
+            <b>Modalidad:</b> {{ v.modality }}
+          </div>
+
+          <div>
+            <i class="fa-solid fa-list-check"></i>
+            <b>Requisitos:</b> {{ v.requirements }}
+          </div>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="actions">
+          <button class="btn-update" (click)="openUpdateVacancyModal(v)">
+            <i class="fa-solid fa-pen-to-square"></i>
+            Actualizar
+          </button>
+
+          <button class="btn-delete" (click)="deleteVacancie(v.id!)">
+            <i class="fa-solid fa-trash"></i>
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -24,7 +24,7 @@ export class NavbarComponent implements OnChanges {
     switch (this.role) {
       case 'company':
         this.links = [
-          { label: 'Vacantes', path: '/company/vacancies' },
+          { label: 'Vacantes', path: '/dashboard/company/vacancies' },
         ];
         break;
 

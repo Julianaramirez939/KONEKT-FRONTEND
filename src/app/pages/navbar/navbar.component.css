@@ -9,13 +9,11 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
-/* LOGO */
 .logo-img {
   height: 42px;
   object-fit: contain;
 }
 
-/* LINKS */
 .navbar-center {
   display: flex;
   gap: 18px;
@@ -35,12 +33,12 @@
   background-color: #f1f5f9;
 }
 
-.active {
-  color: #10b981;
-  font-weight: 600;
+.nav-link.active {
+  background-color: #f1f5f9;
+  border-radius: 6px;
+  color: #0f172a;
 }
 
-/* LOGOUT */
 .logout-btn {
   background-color: #ef4444;
   border: none;

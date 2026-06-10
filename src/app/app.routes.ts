@@ -14,15 +14,17 @@ import { StudentDashboardComponent } from './pages/student-dashboard/student-das
 import { UniversityDashboardComponent } from './pages/university-dashboard/university-dashboard.component';
 import { CompanyDashboardComponent } from './pages/company-dashboard/company-dashboard.component';
 
+import { CompanyVacanciesComponent } from './pages/company-vacancies/company-vacancies.component';
+
 export const routes: Routes = [
   {
     path: '',
-    component: LoginComponent
+    component: LoginComponent,
   },
 
   {
     path: 'roles',
-    component: RolePanelComponent
+    component: RolePanelComponent,
   },
 
   {
@@ -30,22 +32,22 @@ export const routes: Routes = [
     children: [
       {
         path: 'student',
-        component: StudentRegisterComponent
+        component: StudentRegisterComponent,
       },
       {
         path: 'university',
-        component: UniversityRegisterComponent
+        component: UniversityRegisterComponent,
       },
       {
         path: 'company',
-        component: CompanyRegisterComponent
+        component: CompanyRegisterComponent,
       },
       {
         path: '',
         redirectTo: 'student',
-        pathMatch: 'full'
-      }
-    ]
+        pathMatch: 'full',
+      },
+    ],
   },
 
   {
@@ -53,31 +55,42 @@ export const routes: Routes = [
     children: [
       {
         path: 'student',
-        component: StudentDashboardComponent
+        component: StudentDashboardComponent,
       },
       {
         path: 'university',
-        component: UniversityDashboardComponent
+        component: UniversityDashboardComponent,
       },
+
       {
         path: 'company',
-        component: CompanyDashboardComponent
+        children: [
+          {
+            path: '',
+            component: CompanyDashboardComponent,
+          },
+          {
+            path: 'vacancies',
+            component: CompanyVacanciesComponent,
+          },
+        ],
       },
+
       {
         path: '',
         redirectTo: 'student',
-        pathMatch: 'full'
-      }
-    ]
+        pathMatch: 'full',
+      },
+    ],
   },
 
   {
     path: 'forgot-password',
-    component: ForgotPasswordComponent
+    component: ForgotPasswordComponent,
   },
 
   {
     path: 'reset-password',
-    component: ResetPasswordComponent
-  }
+    component: ResetPasswordComponent,
+  },
 ];
