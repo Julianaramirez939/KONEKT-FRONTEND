@@ -40,23 +40,16 @@ export class CompanyApplicationComponent implements OnInit {
       error: (err) => console.error('Error statuses', err),
     });
   }
- loadApplications(): void {
-  const user = JSON.parse(
-    sessionStorage.getItem('user') || '{}'
-  );
+  loadApplications(): void {
+    const user = JSON.parse(sessionStorage.getItem('user') || '{}');
 
-  const companyId = user?.profile?.id;
+    const companyId = user?.profile?.id;
 
-  this.applicationsService
-    .getApplications(this.page, companyId)
-    .subscribe({
+    this.applicationsService.getApplications(this.page, companyId).subscribe({
       next: (response) => {
         this.applications = response.data;
 
-        console.log(
-          'Applications response:',
-          response
-        );
+        console.log('Applications response:', response);
 
         this.total = response.total;
         this.page = response.page;
@@ -75,7 +68,7 @@ export class CompanyApplicationComponent implements OnInit {
         });
       },
     });
-}
+  }
   nextPage(): void {
     if (!this.hasNext) return;
 
@@ -111,83 +104,94 @@ export class CompanyApplicationComponent implements OnInit {
       },
 
       html: `
-    <style>
-      .swal-form {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 14px;
-        font-family: Inter, sans-serif;
-        font-size: 14px;
-      }
+      <style>
+        .swal-form {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 14px;
+          font-family: Inter, sans-serif;
+          font-size: 14px;
+        }
 
-      .swal-field {
-        width: 100%;
-        box-sizing: border-box;
-        border: 1px solid #d1d5db;
-        border-radius: 6px;
-        padding: 8px 10px;
-        font-size: 14px;
-        text-align: center;
-        transition: 0.2s ease;
-      }
+        .swal-field {
+          width: 100%;
+          box-sizing: border-box;
+          border: 1px solid #d1d5db;
+          border-radius: 6px;
+          padding: 8px 10px;
+          font-size: 14px;
+          text-align: center;
+          transition: 0.2s ease;
+        }
 
-      .swal-field:focus {
-        outline: none;
-        border-color: #2563eb;
-        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
-      }
+        .swal-field:focus {
+          outline: none;
+          border-color: #2563eb;
+          box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+        }
 
-      .swal-group {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
+        .swal-group {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
 
-      label {
-        font-weight: 600;
-        color: #111827;
-        text-align: center;
-      }
+        label {
+          font-weight: 600;
+          color: #111827;
+          text-align: center;
+        }
 
-      select.swal-field {
-        appearance: none;
-        background-color: white;
-        text-align: center;
-        text-align-last: center;
-      }
+        select.swal-field {
+          appearance: none;
+          background-color: white;
+          text-align: center;
+          text-align-last: center;
+        }
 
-      textarea.swal-field {
-        text-align: center;
-        resize: none;
-      }
-    </style>
+        textarea.swal-field {
+          text-align: center;
+          resize: none;
+          min-height: 90px;
+        }
+      </style>
 
-    <div class="swal-form">
+      <div class="swal-form">
 
-      <div class="swal-group">
-        <label>Estado de la postulación</label>
-        <select id="status" class="swal-field">
-          <option value="" disabled>Seleccione estado</option>
-          ${this.statuses
-            .map(
-              (s) => `
-                <option value="${s}" ${app.status === s ? 'selected' : ''}>
-                  ${s}
-                </option>
-              `,
-            )
-            .join('')}
-        </select>
+        <div class="swal-group">
+          <label>Estado de la postulación</label>
+
+          <select id="status" class="swal-field">
+            <option value="" disabled>
+              Seleccione estado
+            </option>
+
+            ${this.statuses
+              .map(
+                (s) => `
+                  <option
+                    value="${s}"
+                    ${app.status === s ? 'selected' : ''}
+                  >
+                    ${s}
+                  </option>
+                `,
+              )
+              .join('')}
+          </select>
+        </div>
+
+        <div class="swal-group">
+          <label>Comentarios de la empresa</label>
+
+          <textarea
+            id="companyComments"
+            class="swal-field"
+            placeholder="Opcional"
+          >${app.companyComments ?? ''}</textarea>
+        </div>
+
       </div>
-
-      <div class="swal-group">
-        <label>Comentarios de la empresa</label>
-        <textarea id="companyComments" class="swal-field">${
-          app.companyComments ?? ''
-        }</textarea>
-      </div>
-
-    </div>
     `,
 
       showCancelButton: true,
@@ -203,17 +207,22 @@ export class CompanyApplicationComponent implements OnInit {
 
         const companyComments = (
           document.getElementById('companyComments') as HTMLTextAreaElement
-        ).value;
+        ).value.trim();
 
         if (!status) {
           Swal.showValidationMessage('El estado es obligatorio');
           return false;
         }
 
-        return {
+        const payload: Partial<ApplicationRequest> = {
           status,
-          companyComments,
-        } as Partial<ApplicationRequest>;
+        };
+
+        if (companyComments) {
+          payload.companyComments = companyComments;
+        }
+
+        return payload;
       },
     }).then((result) => {
       if (result.isConfirmed && result.value) {
@@ -233,6 +242,7 @@ export class CompanyApplicationComponent implements OnInit {
               Swal.fire({
                 icon: 'success',
                 title: 'Actualizado',
+                text: 'La postulación fue actualizada correctamente',
                 confirmButtonColor: '#2563eb',
                 customClass: {
                   popup: 'konekt-swal',
@@ -241,11 +251,13 @@ export class CompanyApplicationComponent implements OnInit {
 
               this.loadApplications();
             },
+
             error: () => {
               Swal.fire({
                 icon: 'error',
                 title: 'Error',
                 text: 'No se pudo actualizar la postulación',
+                confirmButtonColor: '#2563eb',
                 customClass: {
                   popup: 'konekt-swal',
                 },

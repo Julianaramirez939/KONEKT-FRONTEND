@@ -25,6 +25,7 @@ export class NavbarComponent implements OnChanges {
     switch (this.role) {
       case 'company':
         this.links = [
+          { label: 'Inicio', path: '/dashboard/company' },
           { label: 'Vacantes', path: '/dashboard/company/vacancies' },
           { label: 'Postulaciones', path: '/dashboard/company/applications' },
         ];
@@ -32,12 +33,14 @@ export class NavbarComponent implements OnChanges {
 
       case 'university':
         this.links = [
+          { label: 'Inicio', path: '/dashboard/university' },
           { label: 'Estudiantes', path: '/dashboard/university/students' },
         ];
         break;
 
       default:
         this.links = [
+          { label: 'Inicio', path: '/dashboard/student' },
           { label: 'Vacantes', path: '/dashboard/student/vacancies' },
           {
             label: 'Mis postulaciones',
@@ -55,8 +58,8 @@ export class NavbarComponent implements OnChanges {
     this.menuOpen = !this.menuOpen;
   }
 
-goToProfile(): void {
-  this.menuOpen = false;
-  this.router.navigate(['/profile']);
-}
+  goToProfile(): void {
+    this.menuOpen = false;
+    this.router.navigate(['/profile']);
+  }
 }
