@@ -30,6 +30,9 @@ import { AdminVacanciesComponent } from './pages/admin-vacancies/admin-vacancies
 import { AdminPartnershipComponent } from './pages/admin-partnership/admin-partnership.component';
 import { UniversityPartnershipComponent } from './pages/university-partnership/university-partnership.component';
 import { CompanyPartnershipComponent } from './pages/company-partnership/company-partnership.component';
+import { UniversityIntershipComponent } from './pages/university-intership/university-intership.component';
+import { StudentInternshipComponent } from './pages/student-internship/student-internship.component';
+import { CompanyInternshipComponent } from './pages/company-internship/company-internship.component';
 
 export const routes: Routes = [
   {
@@ -104,6 +107,11 @@ export const routes: Routes = [
             path: 'partnership',
             component: CompanyPartnershipComponent,
           },
+           {
+            path: 'internship',
+            component: CompanyInternshipComponent,
+          },
+          
         ],
       },
 
@@ -122,6 +130,10 @@ export const routes: Routes = [
             path: 'applications',
             component: StudentApplicationComponent,
           },
+          {
+            path: 'internship',
+            component: StudentInternshipComponent,
+          },
         ],
       },
       {
@@ -138,6 +150,10 @@ export const routes: Routes = [
            {
             path: 'partnership',
             component: UniversityPartnershipComponent,
+          },
+            {
+            path: 'intership',
+            component: UniversityIntershipComponent,
           },
         ],
       },

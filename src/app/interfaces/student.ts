@@ -11,7 +11,7 @@ export interface Student {
   semester: number;
   profilePhoto?: string;
   resume?: string;
-   resumeUrl?: string;
+  resumeUrl?: string;
   user: User;
   university: University;
   createdAt: string;

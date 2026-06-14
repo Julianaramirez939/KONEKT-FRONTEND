@@ -1,0 +1,275 @@
+.page {
+  padding: 30px;
+  font-family: "Segoe UI", sans-serif;
+  background: #f4f6f9;
+  min-height: 100vh;
+}
+
+/* TÍTULO */
+.title {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 25px;
+}
+
+/* EMPTY */
+.empty {
+  text-align: center;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* GRID MÁS HORIZONTAL */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
+  gap: 24px;
+  align-items: stretch;
+}
+
+/* CARD MÁS ANCHA Y TIPO PANEL */
+.card {
+  background: white;
+  border-radius: 14px;
+  padding: 22px 26px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  border-left: 6px solid #2563eb;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* HOVER SUAVE */
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* TITULOS */
+.card h3 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* SUBTÍTULOS */
+.card h4 {
+  margin: 8px 0 4px 0;
+  font-size: 15px;
+  color: #1e293b;
+}
+
+/* TEXTOS */
+.card p {
+  margin: 4px 0;
+  color: #334155;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ESTUDIANTE BLOQUE */
+.student {
+  margin-top: 10px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* SEPARADOR MÁS LIMPIO */
+hr {
+  margin: 14px 0;
+  border: none;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* ICONOS */
+.card i {
+  color: #2563eb;
+  width: 18px;
+  text-align: center;
+}
+.status-activa {
+  color: #16a34a; /* verde */
+  font-weight: 700;
+}
+
+.status-suspendida {
+  color: #2563eb; /* azul */
+  font-weight: 700;
+}
+
+.status-cerrada {
+  color: #dc2626; /* rojo */
+  font-weight: 700;
+}
+/* =========================
+   ACTUALIZACIONES
+========================= */
+
+.updates-container {
+  margin-top: 20px;
+}
+
+.updates-container h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-bottom: 14px;
+
+  color: #0f172a;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.updates-container h4 i {
+  color: #2563eb;
+}
+
+/* CARD DE ACTUALIZACIÓN */
+
+.update-card {
+  background: white;
+
+  border-radius: 12px;
+  padding: 18px;
+
+  margin-bottom: 14px;
+
+  border-left: 5px solid #16a34a;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+
+  transition: all 0.2s ease;
+}
+
+.update-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+}
+
+.update-card h5 {
+  margin: 0 0 10px 0;
+
+  color: #0f172a;
+  font-size: 16px;
+  font-weight: 700;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.update-card h5 i {
+  color: #16a34a;
+}
+
+.update-card p {
+  margin: 0 0 12px 0;
+
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.update-card small {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  color: #64748b;
+  font-size: 12px;
+}
+
+.update-card small i {
+  color: #64748b;
+}
+
+/* SIN ACTUALIZACIONES */
+
+.empty-update {
+  background: white;
+
+  padding: 16px;
+
+  border-radius: 12px;
+
+  text-align: center;
+
+  color: #64748b;
+
+  border: 1px dashed #cbd5e1;
+}
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+
+    margin-top: 40px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  .pagination-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+
+    background-color: #2563eb;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+  }
+
+  .pagination-btn:hover:not(:disabled) {
+    background-color: #1d4ed8;
+  }
+
+  .pagination-btn:disabled {
+    background-color: #cbd5e1;
+    color: #64748b;
+    cursor: not-allowed;
+  }
+
+  .pagination-select {
+    min-width: 180px;
+
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+
+    background: white;
+    font-size: 14px;
+    font-weight: 500;
+    color: #334155;
+
+    outline: none;
+  }
+
+  .pagination-select:focus {
+    border-color: #2563eb;
+  }
+
+  .pagination-info {
+    text-align: center;
+    margin-top: 10px;
+
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 500;
+  }

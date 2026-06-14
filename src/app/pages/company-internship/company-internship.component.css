@@ -1,4 +1,4 @@
-.students-page {
+.internships-page {
   padding: 40px 20px;
   background: #f4f6f9;
   font-family: "Segoe UI", sans-serif;
@@ -8,8 +8,8 @@
   text-align: center;
   font-size: 26px;
   font-weight: 700;
-  margin-bottom: 30px;
   color: #0f172a;
+  margin-bottom: 30px;
 }
 
 .empty {
@@ -29,8 +29,8 @@
   padding: 18px;
   border-radius: 14px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.06);
-  transition: 0.2s;
   border-left: 5px solid #2563eb;
+  transition: 0.2s;
 }
 
 .card:hover {
@@ -38,58 +38,96 @@
 }
 
 .card h3 {
-  margin: 0 0 12px;
+  margin: 0;
   font-size: 18px;
   color: #0f172a;
 }
 
+.card h4 {
+  margin-top: 10px;
+  font-size: 15px;
+}
+
 .card p {
   margin: 6px 0;
-  color: #334155;
   font-size: 14px;
-}
-
-.about {
-  margin-top: 12px;
-  color: #475569;
-  line-height: 1.5;
-}
-
-.info-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  font-size: 13px;
   color: #334155;
 }
 
-.info-grid i {
+.card i {
   margin-right: 6px;
   color: #64748b;
 }
 
+hr {
+  margin: 12px 0;
+  border: none;
+  border-top: 1px solid #e2e8f0;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.btn-update {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.btn-update:hover {
+  background: #1d4ed8;
+}
+
+.btn-delete {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.btn-delete:hover {
+  background: #dc2626;
+}
+
+/* PAGINACIÓN */
 .pagination-container {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 16px;
+
   margin-top: 40px;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding: 20px 0;
 }
 
 .pagination-btn {
   display: flex;
   align-items: center;
   gap: 8px;
+
   padding: 10px 18px;
   border: none;
   border-radius: 10px;
+
   background-color: #2563eb;
   color: white;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
 .pagination-btn:hover:not(:disabled) {
@@ -98,8 +136,8 @@
 
 .pagination-btn:disabled {
   background-color: #cbd5e1;
-  color: #64748b;
   cursor: not-allowed;
+  color: #64748b;
 }
 
 .pagination-select {
@@ -108,42 +146,23 @@
   border: 1px solid #cbd5e1;
   border-radius: 10px;
   background: white;
-  font-size: 14px;
-  font-weight: 500;
-  color: #334155;
+}
+/* ICONOS EN BOTONES EN BLANCO */
+.btn-update i,
+.btn-delete i {
+  color: white !important;
+}
+.status-activa {
+  color: #16a34a; /* verde */
+  font-weight: 700;
 }
 
-.pagination-select:focus {
-  outline: none;
-  border-color: #2563eb;
+.status-suspendida {
+  color: #2563eb; /* azul */
+  font-weight: 700;
 }
 
-.manage-btn {
-  margin-top: 12px;
-
-  width: 100%;
-  padding: 10px 12px;
-
-  background: #2563eb;
-  color: white;
-
-  border: none;
-  border-radius: 10px;
-
-  font-weight: 600;
-  font-size: 14px;
-
-  cursor: pointer;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-
-  transition: 0.2s ease;
-}
-
-.manage-btn:hover {
-  background: #1d4ed8;
-  transform: translateY(-2px);
+.status-cerrada {
+  color: #dc2626; /* rojo */
+  font-weight: 700;
 }

@@ -1,0 +1,83 @@
+<app-navbar [role]="'student'"></app-navbar>
+<div class="page">
+  <h2 class="title">Mis prácticas</h2>
+
+  <div *ngIf="interships.length === 0" class="empty">
+    No tienes prácticas registradas
+  </div>
+
+  <div class="cards">
+    <div *ngFor="let i of interships" class="card">
+      <!-- ESTADO -->
+      <h3>
+  <i class="fa-solid fa-circle-info"></i>
+
+  <span
+    [ngClass]="{
+      'status-activa': i.status === 'Activa',
+      'status-suspendida': i.status === 'Suspendida',
+      'status-cerrada': i.status === 'Cerrada'
+    }"
+  >
+    {{ i.status }}
+  </span>
+</h3>
+
+      <!-- FECHAS -->
+      <p>
+        <i class="fa-solid fa-calendar"></i>
+        Inicio: {{ i.startDate | date: "yyyy-MM-dd" }}
+      </p>
+
+      <p>
+        <i class="fa-solid fa-calendar-check"></i>
+        Fin: {{ i.endDate | date: "yyyy-MM-dd" }}
+      </p>
+
+      <hr />
+
+      <!-- VACANTE -->
+      <h4>
+        <i class="fa-solid fa-briefcase"></i>
+        Vacante
+      </h4>
+
+      <p>
+        <i class="fa-solid fa-heading"></i>
+        {{ i.application.vacancie.title }}
+      </p>
+
+      <p>
+        <i class="fa-solid fa-location-dot"></i>
+        {{ i.application.vacancie.location }}
+      </p>
+
+      <p>
+        <i class="fa-solid fa-sack-dollar"></i>
+        {{ i.application.vacancie.salary | currency: "USD" }}
+      </p>
+
+      <p>
+        <i class="fa-solid fa-laptop"></i>
+        {{ i.application.vacancie.modality }}
+      </p>
+
+      <hr />
+
+      <!-- EMPRESA -->
+      <h4>
+        <i class="fa-solid fa-building"></i>
+        Empresa
+      </h4>
+
+      <p>
+        {{ i.application.vacancie.company.name }}
+      </p>
+
+      <p>
+        <i class="fa-solid fa-phone"></i>
+        {{ i.application.vacancie.company.phone }}
+      </p>
+    </div>
+  </div>
+</div>

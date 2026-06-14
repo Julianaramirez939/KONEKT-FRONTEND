@@ -6,6 +6,7 @@ import { NavbarComponent } from '../navbar/navbar.component';
 
 import { StudentService } from '../../services/student.service';
 import { Student } from '../../interfaces/student';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-university-students',
@@ -25,6 +26,7 @@ export class UniversityStudentsComponent implements OnInit {
 
   constructor(
     private studentService: StudentService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -32,41 +34,45 @@ export class UniversityStudentsComponent implements OnInit {
   }
 
   loadStudents(): void {
-    const user = JSON.parse(
-      sessionStorage.getItem('user') || '{}',
-    );
+    const user = JSON.parse(sessionStorage.getItem('user') || '{}');
 
     const universityId = user?.profile?.id;
 
-    this.studentService
-      .getStudents(this.page, universityId)
-      .subscribe({
-        next: (response) => {
-          this.students = response.data;
+    this.studentService.getStudents(this.page, universityId).subscribe({
+      next: (response) => {
+        this.students = response.data;
 
-          console.log('Students response:', response); // Debug log
+        console.log('Students response:', response); // Debug log
 
-          this.total = response.total;
-          this.page = response.page;
-          this.pageCount = response.page_count;
-          this.hasNext = response.has_next;
-          this.hasPrev = response.has_prev;
-        },
+        this.total = response.total;
+        this.page = response.page;
+        this.pageCount = response.page_count;
+        this.hasNext = response.has_next;
+        this.hasPrev = response.has_prev;
+      },
 
-        error: () => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No se pudieron cargar los estudiantes',
-            confirmButtonColor: '#2563eb',
-            customClass: {
-              popup: 'konekt-swal',
-            },
-          });
-        },
-      });
+      error: () => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudieron cargar los estudiantes',
+          confirmButtonColor: '#2563eb',
+          customClass: {
+            popup: 'konekt-swal',
+          },
+        });
+      },
+    });
   }
+  managePractice(studentId: number): void {
+    const url = this.router.serializeUrl(
+      this.router.createUrlTree(['/dashboard/university/intership'], {
+        queryParams: { studentId },
+      }),
+    );
 
+    window.open(url, '_blank');
+  }
   nextPage(): void {
     if (!this.hasNext) return;
 
@@ -89,9 +95,6 @@ export class UniversityStudentsComponent implements OnInit {
   }
 
   get pages(): number[] {
-    return Array.from(
-      { length: this.pageCount },
-      (_, i) => i + 1,
-    );
+    return Array.from({ length: this.pageCount }, (_, i) => i + 1);
   }
 }

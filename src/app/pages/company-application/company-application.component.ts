@@ -7,6 +7,7 @@ import { ApplicationsService } from '../../services/applications.service';
 import { CommonService } from '../../services/common.service';
 import { ApplicationResponse } from '../../interfaces/application-response';
 import { ApplicationRequest } from '../../interfaces/application-request';
+import { IntershipService } from '../../services//intership.service';
 
 @Component({
   selector: 'app-company-applications',
@@ -24,14 +25,17 @@ export class CompanyApplicationComponent implements OnInit {
   hasPrev = false;
   statuses: any[] = [];
 
+
   constructor(
     private applicationsService: ApplicationsService,
     private commonService: CommonService,
+    private intershipService: IntershipService,
   ) {}
 
   ngOnInit(): void {
     this.loadApplications();
     this.loadCatalogs();
+   
   }
 
   loadCatalogs(): void {
@@ -40,6 +44,7 @@ export class CompanyApplicationComponent implements OnInit {
       error: (err) => console.error('Error statuses', err),
     });
   }
+
   loadApplications(): void {
     const user = JSON.parse(sessionStorage.getItem('user') || '{}');
 
@@ -267,4 +272,124 @@ export class CompanyApplicationComponent implements OnInit {
       }
     });
   }
+  managePractice(applicationId: number): void {
+  Swal.fire({
+    title: `<span style="font-family:Segoe UI; font-weight:600;">Contratar practicante</span>`,
+    width: '750px',
+    showCloseButton: true,
+    customClass: {
+      popup: 'konekt-swal',
+    },
+
+    html: `
+    <style>
+      .swal-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        font-family: Inter, sans-serif;
+        font-size: 14px;
+      }
+
+      .swal-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      label {
+        font-weight: 600;
+        color: #111827;
+        text-align: center;
+      }
+
+      .swal-field {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        padding: 8px 10px;
+        font-size: 14px;
+        text-align: center;
+      }
+
+      .swal-field:focus {
+        outline: none;
+        border-color: #2563eb;
+      }
+    </style>
+
+    <div class="swal-form">
+
+      <!-- START DATE -->
+      <div class="swal-group">
+        <label>Fecha inicio *</label>
+        <input id="startDate" type="date" class="swal-field" />
+      </div>
+
+      <!-- END DATE -->
+      <div class="swal-group">
+        <label>Fecha fin *</label>
+        <input id="endDate" type="date" class="swal-field" />
+      </div>
+
+    </div>
+  `,
+
+    showCancelButton: true,
+    confirmButtonText: 'Guardar',
+    cancelButtonText: 'Cancelar',
+    confirmButtonColor: '#2563eb',
+    cancelButtonColor: '#ef4444',
+
+    preConfirm: () => {
+      const startDate = (document.getElementById('startDate') as HTMLInputElement).value;
+      const endDate = (document.getElementById('endDate') as HTMLInputElement).value;
+
+      if (!startDate || !endDate) {
+        Swal.showValidationMessage('Todos los campos son obligatorios');
+        return false;
+      }
+
+      return {
+        status: 'Activa', // 👈 fijo por backend
+        startDate,
+        endDate,
+        applicationId,
+      };
+    },
+  }).then((result) => {
+    if (!result.isConfirmed || !result.value) return;
+
+    Swal.fire({
+      title: 'Guardando...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading(),
+      customClass: { popup: 'konekt-swal' },
+    });
+
+    this.intershipService.createIntership(result.value).subscribe({
+      next: () => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Contrada/o',
+          confirmButtonColor: '#2563eb',
+          customClass: { popup: 'konekt-swal' },
+        });
+
+        // ❌ no reload si no quieres
+      },
+
+      error: () => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo gestionar la práctica',
+          confirmButtonColor: '#2563eb',
+          customClass: { popup: 'konekt-swal' },
+        });
+      },
+    });
+  });
+}
 }

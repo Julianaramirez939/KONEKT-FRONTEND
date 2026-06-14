@@ -1,0 +1,183 @@
+<div class="page" *ngFor="let i of interships">
+  <h2 class="title">
+    Práctica del estudiante {{ i.application.student.fullName }}
+  </h2>
+
+  <div *ngIf="interships.length === 0" class="empty">
+    No hay prácticas registradas
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <!-- ESTADO -->
+      <h3>
+        <i class="fa-solid fa-circle-info"></i>
+
+        <span
+          [ngClass]="{
+            'status-activa': i.status === 'Activa',
+            'status-suspendida': i.status === 'Suspendida',
+            'status-cerrada': i.status === 'Cerrada',
+          }"
+        >
+          {{ i.status }}
+        </span>
+      </h3>
+
+      <!-- FECHAS -->
+      <p>
+        <i class="fa-solid fa-calendar"></i>
+        <b>Inicio:</b>
+        {{ i.startDate | date: "yyyy-MM-dd" }}
+      </p>
+
+      <p>
+        <i class="fa-solid fa-calendar-check"></i>
+        <b>Fin:</b>
+        {{ i.endDate | date: "yyyy-MM-dd" }}
+      </p>
+
+      <hr />
+
+      <!-- VACANTE -->
+      <h4>
+        <i class="fa-solid fa-briefcase"></i>
+        Vacante
+      </h4>
+
+      <p>
+        <i class="fa-solid fa-heading"></i>
+        <b>Título:</b>
+        {{ i.application.vacancie.title }}
+      </p>
+
+      <p>
+        <i class="fa-solid fa-location-dot"></i>
+        <b>Ubicación:</b>
+        {{ i.application.vacancie.location }}
+      </p>
+
+      <p>
+        <i class="fa-solid fa-sack-dollar"></i>
+        <b>Salario:</b>
+        {{ i.application.vacancie.salary | currency: "USD" }}
+      </p>
+
+      <p>
+        <i class="fa-solid fa-laptop"></i>
+        <b>Modalidad:</b>
+        {{ i.application.vacancie.modality }}
+      </p>
+
+      <hr />
+
+      <!-- EMPRESA -->
+      <h4>
+        <i class="fa-solid fa-building"></i>
+        Empresa
+      </h4>
+
+      <p>
+        <i class="fa-solid fa-signature"></i>
+        <b>Nombre:</b>
+        {{ i.application.vacancie.company.name }}
+      </p>
+
+      <p>
+        <i class="fa-solid fa-phone"></i>
+        <b>Teléfono:</b>
+        {{ i.application.vacancie.company.phone }}
+      </p>
+
+      <hr />
+
+      <!-- ESTUDIANTE -->
+      <h4>
+        <i class="fa-solid fa-user"></i>
+        Estudiante
+      </h4>
+
+      <p>
+        <i class="fa-solid fa-id-badge"></i>
+        <b>Nombre:</b>
+        {{ i.application.student.fullName }}
+      </p>
+
+      <p>
+        <i class="fa-solid fa-envelope"></i>
+        <b>Email:</b>
+        {{ i.application.student.user.email }}
+      </p>
+    </div>
+  </div>
+  <!-- ACTUALIZACIONES -->
+<div
+  class="updates-container"
+  *ngIf="i.updates && i.updates.length > 0"
+>
+  <h4>
+    <i class="fa-solid fa-list-check"></i>
+    Actualizaciones de la práctica
+  </h4>
+
+  <div
+    class="update-card"
+    *ngFor="let update of i.updates"
+  >
+    <h5>
+      <i class="fa-solid fa-clipboard-check"></i>
+      {{ update.title }}
+    </h5>
+
+    <p>
+      <i class="fa-solid fa-file-lines"></i>
+      {{ update.description }}
+    </p>
+
+    <small>
+      <i class="fa-solid fa-clock"></i>
+      {{ update.createdAt | date:'yyyy-MM-dd HH:mm' }}
+    </small>
+  </div>
+</div>
+
+<div
+  class="updates-container"
+  *ngIf="i.updates && i.updates.length === 0"
+>
+  <h4>
+    <i class="fa-solid fa-list-check"></i>
+    Actualizaciones de la práctica
+  </h4>
+
+  <p class="empty-update">
+    No hay actualizaciones registradas.
+  </p>
+</div>
+ <!-- PAGINACIÓN -->
+    <div class="pagination-container" *ngIf="pageCount > 1">
+      <button
+        class="pagination-btn"
+        (click)="previousPage()"
+        [disabled]="!hasPrev"
+      >
+        <i class="fa-solid fa-chevron-left"></i>
+        Anterior
+      </button>
+
+      <select
+        class="pagination-select"
+        [value]="page"
+        (change)="goToPage(+$any($event.target).value)"
+      >
+        <option *ngFor="let p of pages" [value]="p">
+          Página {{ p }} de {{ pageCount }}
+        </option>
+      </select>
+
+      <button class="pagination-btn" (click)="nextPage()" [disabled]="!hasNext">
+        Siguiente
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+</div>

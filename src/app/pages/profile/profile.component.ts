@@ -489,21 +489,24 @@ updateResume(): void {
   }
 
   togglePasswordForm(): void {
-    Swal.fire({
-      title: 'Cambiar contraseña',
-      text: '¿Deseas modificar tu contraseña?',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Sí',
-      cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#2563eb',
-      cancelButtonColor: '#ef4444',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.showPasswordForm = true;
-      }
-    });
-  }
+  Swal.fire({
+    title: 'Cambiar contraseña',
+    text: '¿Deseas modificar tu contraseña?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Sí',
+    cancelButtonText: 'Cancelar',
+    confirmButtonColor: '#2563eb',
+    cancelButtonColor: '#ef4444',
+    customClass: {
+      popup: 'konekt-swal',
+    },
+  }).then((result) => {
+    if (result.isConfirmed) {
+      this.showPasswordForm = true;
+    }
+  });
+}
 
   cancelPasswordChange(): void {
     this.passwordForm.reset();
@@ -600,57 +603,98 @@ updateResume(): void {
     });
   }
 
-  changePassword(): void {
-    if (this.passwordForm.invalid) return;
+ changePassword(): void {
+  if (this.passwordForm.invalid) return;
 
-    const payload = {
-      password: this.passwordForm.value.password,
-    };
+  const payload = {
+    password: this.passwordForm.value.password,
+  };
+
+  Swal.fire({
+    title: '¿Desea cambiar la contraseña?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, cambiar',
+    cancelButtonText: 'Cancelar',
+    confirmButtonColor: '#2563eb',
+    cancelButtonColor: '#ef4444',
+    customClass: {
+      popup: 'konekt-swal',
+    },
+  }).then((result) => {
+    if (!result.isConfirmed) return;
+
+    let request$;
+
+    switch (this.user.role) {
+      case 'student':
+        request$ = this.studentService.updateStudent(
+          this.profile.id,
+          payload,
+        );
+        break;
+
+      case 'company':
+        request$ = this.companyService.updateCompany(
+          this.profile.id,
+          payload,
+        );
+        break;
+
+      case 'university':
+        request$ = this.universityService.updateUniversity(
+          this.profile.id,
+          payload,
+        );
+        break;
+
+      default:
+        return;
+    }
 
     Swal.fire({
-      title: '¿Desea cambiar la contraseña?',
-      icon: 'question',
-      showCancelButton: true,
-    }).then((result) => {
-      if (!result.isConfirmed) return;
-
-      let request$;
-
-      switch (this.user.role) {
-        case 'student':
-          request$ = this.studentService.updateStudent(this.profile.id, payload);
-          break;
-        case 'company':
-          request$ = this.companyService.updateCompany(this.profile.id, payload);
-          break;
-        case 'university':
-          request$ = this.universityService.updateUniversity(this.profile.id, payload);
-          break;
-        default:
-          return;
-      }
-
-      request$.subscribe({
-        next: () => {
-          this.passwordForm.reset();
-          this.showPasswordForm = false;
-          this.showPassword = false;
-
-          Swal.fire({
-            icon: 'success',
-            title: 'Contraseña actualizada',
-          });
-        },
-        error: (error) => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: error?.message || 'No se pudo cambiar la contraseña',
-          });
-        },
-      });
+      title: 'Actualizando...',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+      customClass: {
+        popup: 'konekt-swal',
+      },
     });
-  }
+
+    request$.subscribe({
+      next: () => {
+        this.passwordForm.reset();
+        this.showPasswordForm = false;
+        this.showPassword = false;
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Contraseña actualizada',
+          text: 'La contraseña fue actualizada correctamente',
+          confirmButtonColor: '#2563eb',
+          customClass: {
+            popup: 'konekt-swal',
+          },
+        });
+      },
+
+      error: (error) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error?.message || 'No se pudo cambiar la contraseña',
+          confirmButtonColor: '#2563eb',
+          customClass: {
+            popup: 'konekt-swal',
+          },
+        });
+      },
+    });
+  });
+}
 
   goToDashboard(): void {
     switch (this.user.role) {

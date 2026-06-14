@@ -41,8 +41,7 @@ export class NavbarComponent implements OnChanges, OnInit {
     try {
       const user = JSON.parse(userStr);
 
-      this.profilePhotoUrl =
-        user?.profile?.profilePhotoUrl || null;
+      this.profilePhotoUrl = user?.profile?.profilePhotoUrl || null;
     } catch {
       this.profilePhotoUrl = null;
     }
@@ -56,6 +55,7 @@ export class NavbarComponent implements OnChanges, OnInit {
           { label: 'Vacantes', path: '/dashboard/company/vacancies' },
           { label: 'Postulaciones', path: '/dashboard/company/applications' },
           { label: 'Convenios', path: '/dashboard/company/partnership' },
+          { label: 'Prácticas', path: '/dashboard/company/internship' },
         ];
         break;
 
@@ -87,6 +87,10 @@ export class NavbarComponent implements OnChanges, OnInit {
           {
             label: 'Mis postulaciones',
             path: '/dashboard/student/applications',
+          },
+          {
+            label: 'Mi práctica',
+            path: '/dashboard/student/internship',
           },
         ];
     }

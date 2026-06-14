@@ -1,0 +1,80 @@
+.page {
+  padding: 30px;
+  font-family: "Segoe UI", sans-serif;
+  background: #f4f6f9;
+  min-height: 100vh;
+}
+
+.title {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  color: #0f172a;
+}
+
+.empty {
+  text-align: center;
+  color: #64748b;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background: white;
+  border-radius: 14px;
+  padding: 22px 26px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  border-left: 6px solid #10b981;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  transition: 0.2s ease;
+}
+
+.card h3, .card h4 {
+  margin: 0;
+  color: #0f172a;
+}
+
+.card p {
+  margin: 4px 0;
+  color: #334155;
+  font-size: 14px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+hr {
+  margin: 14px 0;
+  border: none;
+  border-top: 1px solid #e2e8f0;
+}
+
+.card i {
+  color: #10b981;
+}
+.status-activa {
+  color: #16a34a; /* verde */
+  font-weight: 700;
+}
+
+.status-suspendida {
+  color: #2563eb; /* azul */
+  font-weight: 700;
+}
+
+.status-cerrada {
+  color: #dc2626; /* rojo */
+  font-weight: 700;
+}
