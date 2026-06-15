@@ -110,4 +110,14 @@ export class IntershipService {
       })
       .pipe(catchError(this.handleError));
   }
+  // =========================
+// GET BY ID (detalle internship)
+// =========================
+getIntershipById(id: number): Observable<IntershipResponse> {
+  return this.http
+    .get<IntershipResponse>(`${this.endpoint}/${id}`, {
+      headers: this.getHeaders(),
+    })
+    .pipe(catchError(this.handleError));
+}
 }

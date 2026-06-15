@@ -10,6 +10,7 @@ export interface Student {
   career: string;
   semester: number;
   profilePhoto?: string;
+    profilePhotoUrl?: string;
   resume?: string;
   resumeUrl?: string;
   user: User;

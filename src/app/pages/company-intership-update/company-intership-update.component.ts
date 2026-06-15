@@ -2,18 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 
-import { NavbarComponent } from '../navbar/navbar.component';
-
 import { InternshipUpdateService } from '../../services/internship-update.service';
 
 import { InternshipUpdateResponse } from '../../interfaces/internship-update-response';
 import { InternshipUpdateListResponse } from '../../interfaces/internship-update-list-response';
 import { ActivatedRoute } from '@angular/router';
+import { IntershipResponse } from '../../interfaces/internship-response';
+import { IntershipService } from '../../services/intership.service';
 
 @Component({
   selector: 'app-company-internship-update',
   standalone: true,
-  imports: [CommonModule, NavbarComponent],
+  imports: [CommonModule],
   templateUrl: './company-intership-update.component.html',
   styleUrl: './company-intership-update.component.css',
 })
@@ -25,11 +25,13 @@ export class CompanyIntershipUpdateComponent implements OnInit {
   pageCount = 0;
   hasNext = false;
   hasPrev = false;
+  internshipInfo: IntershipResponse | null = null;
 
   internshipId?: number;
 
   constructor(
     private internshipUpdateService: InternshipUpdateService,
+    private internshipService: IntershipService,
     private route: ActivatedRoute,
   ) {}
 
@@ -39,6 +41,7 @@ export class CompanyIntershipUpdateComponent implements OnInit {
 
       if (internshipId) {
         this.internshipId = Number(internshipId);
+        this.loadInternshipInfo();
       }
 
       this.loadUpdates();
@@ -73,7 +76,24 @@ export class CompanyIntershipUpdateComponent implements OnInit {
         },
       });
   }
-
+  loadInternshipInfo(): void {
+    this.internshipService.getIntershipById(this.internshipId!).subscribe({
+      next: (res: any) => {
+        this.internshipInfo = res;
+      },
+      error: () => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo cargar la práctica',
+          customClass: { popup: 'konekt-swal' },
+        });
+      },
+    });
+  }
+  openFile(url: string): void {
+    window.open(url, '_blank');
+  }
   nextPage(): void {
     if (!this.hasNext) return;
 
@@ -109,82 +129,82 @@ export class CompanyIntershipUpdateComponent implements OnInit {
       },
 
       html: `
-      <style>
-        .swal-form {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 14px;
-          font-family: Inter, sans-serif;
-          font-size: 14px;
-        }
+        <style>
+          .swal-form {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            font-family: Inter, sans-serif;
+            font-size: 14px;
+          }
 
-        .swal-group {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-        }
+          .swal-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+          }
 
-        label {
-          font-weight: 600;
-          color: #111827;
-          text-align: center;
-        }
+          label {
+            font-weight: 600;
+            color: #111827;
+            text-align: center;
+          }
 
-        .required {
-          color: #ef4444;
-          margin-left: 3px;
-        }
+          .required {
+            color: #ef4444;
+            margin-left: 3px;
+          }
 
-        .swal-field {
-          width: 100%;
-          box-sizing: border-box;
-          border: 1px solid #d1d5db;
-          border-radius: 6px;
-          padding: 10px;
-          font-size: 14px;
-          text-align: center;
-        }
+          .swal-field {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 14px;
+            text-align: center;
+          }
 
-        .swal-field:focus {
-          outline: none;
-          border-color: #2563eb;
-        }
+          .swal-field:focus {
+            outline: none;
+            border-color: #2563eb;
+          }
 
-        textarea.swal-field {
-          min-height: 120px;
-          resize: vertical;
-        }
-      </style>
+          textarea.swal-field {
+            min-height: 120px;
+            resize: vertical;
+          }
+        </style>
 
-      <div class="swal-form">
+        <div class="swal-form">
 
-        <div class="swal-group">
-          <label>
-            Título
-            <span class="required">*</span>
-          </label>
+          <div class="swal-group">
+            <label>
+              Título
+              <span class="required">*</span>
+            </label>
 
-          <input
-            id="title"
-            class="swal-field"
-            value="${update.title}"
-          />
+            <input
+              id="title"
+              class="swal-field"
+              value="${update.title}"
+            />
+          </div>
+
+          <div class="swal-group">
+            <label>
+              Descripción
+              <span class="required">*</span>
+            </label>
+
+            <textarea
+              id="description"
+              class="swal-field"
+            >${update.description}</textarea>
+          </div>
+
         </div>
-
-        <div class="swal-group">
-          <label>
-            Descripción
-            <span class="required">*</span>
-          </label>
-
-          <textarea
-            id="description"
-            class="swal-field"
-          >${update.description}</textarea>
-        </div>
-
-      </div>
-    `,
+      `,
 
       showCancelButton: true,
       confirmButtonText: 'Actualizar',

@@ -10,135 +10,234 @@ import { ApplicationsService } from '../../services/applications.service';
 import localeEsCo from '@angular/common/locales/es-CO';
 import { registerLocaleData } from '@angular/common';
 
+import { NgSelectModule } from '@ng-select/ng-select';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { CommonService } from '../../services/common.service';
+import { CompanyService } from '../../services/company.service';
+
+type VacancieUI = VacancieResponse & { expanded: boolean };
+
 registerLocaleData(localeEsCo, 'es-CO');
 
 @Component({
   selector: 'app-student-vacancies',
   standalone: true,
-  imports: [CommonModule, NavbarComponent],
+  imports: [CommonModule, NavbarComponent, NgSelectModule, ReactiveFormsModule],
   templateUrl: './student-vacancies.component.html',
   styleUrl: './student-vacancies.component.css',
 })
 export class StudentVacanciesComponent implements OnInit {
-  vacancies: VacancieResponse[] = [];
-page = 1;
-total = 0;
-pageCount = 0;
-hasNext = false;
-hasPrev = false;
+  vacancies: VacancieUI[] = [];
+
+  page = 1;
+  total = 0;
+  pageCount = 0;
+  hasNext = false;
+  hasPrev = false;
+  companies: any[] = [];
+
+  industries: string[] = [];
+  modalities: string[] = [];
+
+  filtersForm!: FormGroup;
+
+  // 👇 estado central de filtros
+  currentFilters: any = {};
+
   constructor(
+    private fb: FormBuilder,
     private vacanciesService: VacanciesService,
     private applicationsService: ApplicationsService,
+    private commonService: CommonService,
+    private companyServie: CompanyService,
   ) {}
 
   ngOnInit(): void {
+    this.initFiltersForm();
+    this.loadCatalogs();
+    this.loadCompanies(); // ✔️ FALTABA
     this.loadVacancies();
   }
 
-loadVacancies(): void {
-  const user = JSON.parse(sessionStorage.getItem('user') || '{}');
-  const notAppliedByStudentId = user?.profile?.id;
+  // =========================
+  // FORM FILTERS
+  // =========================
+  private initFiltersForm(): void {
+    this.filtersForm = this.fb.group({
+      title: [''],
+      location: [''],
+      modality: [null],
+      industry: [null],
+      salary: [null],
+      companyId: [null], // ✔️ IMPORTANTE
+    });
+  }
 
-  this.vacanciesService
-    .getVacancies(
-      this.page,
-      notAppliedByStudentId,
-      'Activa'
-    )
-    .subscribe({
-      next: (response: any) => {
-        this.vacancies = response.data;
-
-        this.total = response.total;
-        this.page = response.page;
-        this.pageCount = response.page_count;
-        this.hasNext = response.has_next;
-        this.hasPrev = response.has_prev;
+  // =========================
+  // CATALOGS (COMMON SERVICE)
+  // =========================
+  private loadCatalogs(): void {
+    this.commonService.getConstants('industry-type').subscribe({
+      next: (res) => {
+        this.industries = res;
       },
+      error: (err) => console.error('Error loading industries', err),
+    });
 
-      error: () => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'No se pudieron cargar las vacantes',
-          confirmButtonColor: '#2563eb',
-          customClass: { popup: 'konekt-swal' },
-        });
+    this.commonService.getConstants('modality').subscribe({
+      next: (res) => {
+        this.modalities = res;
+      },
+      error: (err) => console.error('Error loading modalities', err),
+    });
+  }
+  private loadCompanies(): void {
+    this.companyServie.getCompanies(undefined, true).subscribe({
+      next: (res: any) => {
+        this.companies = res.data ?? res;
+      },
+      error: (err) => {
+        console.error('Error loading companies', err);
       },
     });
-}
-nextPage(): void {
-  if (!this.hasNext) return;
+  }
+  // =========================
+  // APPLY FILTERS
+  // =========================
+  applyFilters(): void {
+    this.page = 1;
 
-  this.page++;
-  this.loadVacancies();
-}
+    const raw = this.filtersForm.value;
 
-previousPage(): void {
-  if (!this.hasPrev) return;
+    this.currentFilters = {
+      title: raw.title?.trim() || undefined,
+      location: raw.location?.trim() || undefined,
+      modality: raw.modality || undefined,
+      industry: raw.industry || undefined,
+      salary: raw.salary || undefined,
+      companyId: raw.companyId || undefined,
+    };
 
-  this.page--;
-  this.loadVacancies();
-}
+    this.loadVacancies();
+  }
 
-goToPage(page: number): void {
-  if (page < 1 || page > this.pageCount) return;
+  // =========================
+  // LOAD VACANCIES (UNIFIED)
+  // =========================
+  loadVacancies(): void {
+    const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+    const notAppliedByStudentId = user?.profile?.id;
 
-  this.page = page;
-  this.loadVacancies();
-}
+    const f = this.currentFilters ?? {};
 
-get pages(): number[] {
-  return Array.from(
-    { length: this.pageCount },
-    (_, i) => i + 1
-  );
-}
+    this.vacanciesService
+      .getVacancies(
+        this.page,
+        notAppliedByStudentId,
+        'Activa',
+        f.companyId,
+        f.title,
+        f.location,
+        f.modality,
+        f.salary,
+        f.industry,
+      )
+      .subscribe({
+        next: (response: any) => {
+          this.vacancies = response.data.map((v: any) => ({
+            ...v,
+            expanded: false,
+          }));
 
-applyVacancy(vacancy: VacancieResponse): void {
-  Swal.fire({
-    title: '¿Postularte a esta vacante?',
-    text: vacancy.title,
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonText: 'Sí, postularme',
-    cancelButtonText: 'Cancelar',
-    confirmButtonColor: '#2563eb',
-    cancelButtonColor: '#ef4444',
-    customClass: { popup: 'konekt-swal' },
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Swal.fire({
-        title: 'Enviando postulación...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading(),
-        customClass: { popup: 'konekt-swal' },
-      });
-
-      this.applicationsService.createApplication(vacancy.id!).subscribe({
-        next: () => {
-          this.loadVacancies();
-
-          Swal.fire({
-            icon: 'success',
-            title: 'Postulación enviada',
-            text: 'Te has postulado correctamente a la vacante.',
-            confirmButtonColor: '#2563eb',
-            customClass: { popup: 'konekt-swal' },
-          });
+          this.total = response.total;
+          this.page = response.page;
+          this.pageCount = response.page_count;
+          this.hasNext = response.has_next;
+          this.hasPrev = response.has_prev;
         },
 
         error: () => {
           Swal.fire({
             icon: 'error',
             title: 'Error',
-            text: 'No se pudo postular',
+            text: 'No se pudieron cargar las vacantes',
             confirmButtonColor: '#2563eb',
-            customClass: { popup: 'konekt-swal' },
           });
         },
       });
-    }
-  });
-}
+  }
+  nextPage(): void {
+    if (!this.hasNext) return;
+
+    this.page++;
+    this.loadVacancies();
+  }
+
+  previousPage(): void {
+    if (!this.hasPrev) return;
+
+    this.page--;
+    this.loadVacancies();
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.pageCount) return;
+
+    this.page = page;
+    this.loadVacancies();
+  }
+
+  get pages(): number[] {
+    return Array.from({ length: this.pageCount }, (_, i) => i + 1);
+  }
+
+  applyVacancy(vacancy: VacancieResponse): void {
+    Swal.fire({
+      title: '¿Postularte a esta vacante?',
+      text: vacancy.title,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, postularme',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#2563eb',
+      cancelButtonColor: '#ef4444',
+      customClass: { popup: 'konekt-swal' },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Enviando postulación...',
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading(),
+          customClass: { popup: 'konekt-swal' },
+        });
+
+        this.applicationsService.createApplication(vacancy.id!).subscribe({
+          next: () => {
+            this.loadVacancies();
+
+            Swal.fire({
+              icon: 'success',
+              title: 'Postulación enviada',
+              text: 'Te has postulado correctamente a la vacante.',
+              confirmButtonColor: '#2563eb',
+              customClass: { popup: 'konekt-swal' },
+            });
+          },
+
+          error: () => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo postular',
+              confirmButtonColor: '#2563eb',
+              customClass: { popup: 'konekt-swal' },
+            });
+          },
+        });
+      }
+    });
+  }
+  openPhoto(url: string): void {
+    window.open(url, '_blank');
+  }
 }

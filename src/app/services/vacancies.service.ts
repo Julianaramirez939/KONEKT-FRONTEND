@@ -45,16 +45,18 @@ getVacancies(
   page: number,
   notAppliedByStudentId?: number,
   status?: string,
-  companyId?: number
+  companyId?: number,
+  title?: string,
+  location?: string,
+  modality?: string,
+  salary?: number,
+  industry?: string
 ): Observable<VacancieListResponse> {
 
   let params = new HttpParams().set('page', page);
 
   if (notAppliedByStudentId !== undefined) {
-    params = params.set(
-      'notAppliedByStudentId',
-      notAppliedByStudentId
-    );
+    params = params.set('notAppliedByStudentId', notAppliedByStudentId);
   }
 
   if (status) {
@@ -65,6 +67,26 @@ getVacancies(
     params = params.set('companyId', companyId);
   }
 
+  if (title) {
+    params = params.set('title', title);
+  }
+
+  if (location) {
+    params = params.set('location', location);
+  }
+
+  if (modality) {
+    params = params.set('modality', modality);
+  }
+
+  if (salary !== undefined && salary !== null) {
+    params = params.set('salary', salary);
+  }
+
+  if (industry) {
+    params = params.set('industry', industry);
+  }
+
   return this.http
     .get<VacancieListResponse>(this.endpoint, {
       headers: this.getHeaders(),
@@ -72,10 +94,7 @@ getVacancies(
     })
     .pipe(
       catchError((error) => {
-        console.error(
-          '[VacanciesService] getVacancies error:',
-          error
-        );
+        console.error('[VacanciesService] getVacancies error:', error);
 
         return throwError(() => ({
           message: 'Error fetching vacancies',

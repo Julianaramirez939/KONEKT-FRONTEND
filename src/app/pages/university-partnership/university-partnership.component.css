@@ -228,5 +228,75 @@
 .comment {
   margin: 0;
 }
+.student-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+/* AVATAR */
+.student-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.student-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* PLACEHOLDER */
+.avatar-placeholder {
+  font-size: 18px;
+  color: #6b7280;
+}
+
+/* INFO */
+.student-info {
+  flex: 1;
+}
+
+.student-info h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* BOTÓN VER (AZUL) */
+.view-photo-btn {
+  background: #2563eb; /* azul */
+  color: white;
+  border: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s ease;
+  flex-shrink: 0;
+}
+
+.view-photo-btn:hover {
+  background: #1d4ed8;
+  transform: scale(1.05);
+}
+
+/* OPCIONAL: mejor espaciado en cards */
+.card {
+  padding: 16px;
+}
+
 
 

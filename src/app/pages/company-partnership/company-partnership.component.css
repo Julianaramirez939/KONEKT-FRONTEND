@@ -83,14 +83,13 @@
 
 .card p {
   color: #475569;
- 
+
   font-size: 14px;
 }
 
 .card div {
   font-size: 13px;
   color: #334155;
-
 }
 
 .card b {
@@ -229,4 +228,50 @@
   margin: 0;
 }
 
+.university-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
+.university-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.university-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  font-size: 18px;
+  color: #64748b;
+}
+.btn-view-uni {
+  margin-left: auto;
+  background: #2563eb;
+  border: none;
+  color: white;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s ease;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-view-uni:hover {
+  background: #1d4ed8;
+  transform: scale(1.05);
+}

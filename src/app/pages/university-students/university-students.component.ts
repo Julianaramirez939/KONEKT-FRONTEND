@@ -97,4 +97,7 @@ export class UniversityStudentsComponent implements OnInit {
   get pages(): number[] {
     return Array.from({ length: this.pageCount }, (_, i) => i + 1);
   }
+  openStudentPhoto(url: string): void {
+  window.open(url, '_blank');
+}
 }

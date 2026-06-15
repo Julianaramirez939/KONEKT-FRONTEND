@@ -8,6 +8,7 @@ import { IntershipResponse } from '../../interfaces/internship-response';
 import { CommonService } from '../../services/common.service';
 import { InternshipUpdateService } from '../../services/internship-update.service';
 import { Router } from '@angular/router';
+import { FilesService } from '../../services/files.service';
 
 @Component({
   selector: 'app-company-internship',
@@ -31,6 +32,7 @@ export class CompanyInternshipComponent implements OnInit {
     private commonService: CommonService,
     private internshipUpdateService: InternshipUpdateService,
     private router: Router,
+    private fileService: FilesService,
   ) {}
 
   ngOnInit(): void {
@@ -454,11 +456,18 @@ export class CompanyInternshipComponent implements OnInit {
                 popup: 'konekt-swal',
               },
             }).then(() => {
-              this.router.navigate(['/dashboard/company/internship-update'], {
-                queryParams: {
-                  internshipId: intership.id,
-                },
-              });
+              const url = this.router.serializeUrl(
+                this.router.createUrlTree(
+                  ['/dashboard/company/internship-update'],
+                  {
+                    queryParams: {
+                      internshipId: intership.id,
+                    },
+                  },
+                ),
+              );
+
+              window.open(url, '_blank');
             });
           },
 
@@ -476,13 +485,272 @@ export class CompanyInternshipComponent implements OnInit {
     });
   }
   viewInternshipDetails(intership: IntershipResponse): void {
-  this.router.navigate(
-    ['/dashboard/company/internship-update'],
-    {
-      queryParams: {
-        internshipId: intership.id,
+    const url = this.router.serializeUrl(
+      this.router.createUrlTree(['/dashboard/company/internship-update'], {
+        queryParams: {
+          internshipId: intership.id,
+        },
+      }),
+    );
+
+    window.open(url, '_blank');
+  }
+  openDocumentsModal(i: IntershipResponse): void {
+    let arlFile: File | null = null;
+    let epsFile: File | null = null;
+
+    const arlUrl = i.arlCertificationUrl || null;
+    const epsUrl = i.epsCertificationUrl || null;
+
+    Swal.fire({
+      title: 'Documentos del practicante',
+      width: '520px',
+      showCancelButton: true,
+      confirmButtonText: 'Aceptar',
+      cancelButtonText: 'Cerrar',
+      confirmButtonColor: '#2563eb',
+      cancelButtonColor: '#ef4444',
+      customClass: { popup: 'konekt-swal' },
+
+      html: `
+      <style>
+        .toggle {
+          display:flex;
+          justify-content:center;
+          gap:10px;
+          margin-bottom:12px;
+        }
+
+        .toggle button {
+          padding:6px 12px;
+          border-radius:20px;
+          border:1px solid #d1d5db;
+          background:#fff;
+          cursor:pointer;
+          font-size:12px;
+        }
+
+        .toggle button.active {
+          background:#2563eb;
+          color:#fff;
+          border-color:#2563eb;
+        }
+
+        .box {
+          border:1px solid #e5e7eb;
+          border-radius:10px;
+          padding:12px;
+        }
+
+        .hidden {
+          display:none;
+        }
+
+        .title {
+          font-weight:600;
+          font-size:14px;
+          margin-bottom:8px;
+        }
+
+        .btn {
+          background:#2563eb;
+          color:#fff;
+          border:none;
+          padding:6px 10px;
+          border-radius:6px;
+          cursor:pointer;
+          font-size:12px;
+        }
+
+        .btn-view {
+          background:#10b981;
+          color:#fff;
+          border:none;
+          padding:6px 10px;
+          border-radius:6px;
+          cursor:pointer;
+          font-size:12px;
+          margin-top:6px;
+          display:inline-block;
+          text-decoration:none;
+        }
+
+        .preview {
+          margin-top:8px;
+          font-size:12px;
+          color:#111;
+        }
+      </style>
+
+      <div class="toggle">
+        <button id="tabArl" class="active">ARL</button>
+        <button id="tabEps">EPS</button>
+      </div>
+
+      <!-- ARL -->
+      <div id="arlBox" class="box">
+        <div class="title">Certificado ARL</div>
+
+        <input type="file" id="arlInput" hidden accept=".pdf,.jpg,.png"/>
+        <button class="btn" id="btnArlFile">Seleccionar archivo</button>
+
+        ${
+          arlUrl
+            ? `<a class="btn-view" href="${arlUrl}" target="_blank">Ver archivo actual</a>`
+            : `<div style="font-size:12px;color:#6b7280;margin-top:6px;">Sin archivo</div>`
+        }
+
+        <div id="arlPreview" class="preview"></div>
+      </div>
+
+      <!-- EPS -->
+      <div id="epsBox" class="box hidden">
+        <div class="title">Certificado EPS</div>
+
+        <input type="file" id="epsInput" hidden accept=".pdf,.jpg,.png"/>
+        <button class="btn" id="btnEpsFile">Seleccionar archivo</button>
+
+        ${
+          epsUrl
+            ? `<a class="btn-view" href="${epsUrl}" target="_blank">Ver archivo actual</a>`
+            : `<div style="font-size:12px;color:#6b7280;margin-top:6px;">Sin archivo</div>`
+        }
+
+        <div id="epsPreview" class="preview"></div>
+      </div>
+    `,
+
+      didOpen: () => {
+        const tabArl = document.getElementById('tabArl')!;
+        const tabEps = document.getElementById('tabEps')!;
+        const arlBox = document.getElementById('arlBox')!;
+        const epsBox = document.getElementById('epsBox')!;
+
+        const arlInput = document.getElementById(
+          'arlInput',
+        ) as HTMLInputElement;
+        const epsInput = document.getElementById(
+          'epsInput',
+        ) as HTMLInputElement;
+
+        const arlPreview = document.getElementById('arlPreview')!;
+        const epsPreview = document.getElementById('epsPreview')!;
+
+        tabArl.onclick = () => {
+          tabArl.classList.add('active');
+          tabEps.classList.remove('active');
+          arlBox.classList.remove('hidden');
+          epsBox.classList.add('hidden');
+        };
+
+        tabEps.onclick = () => {
+          tabEps.classList.add('active');
+          tabArl.classList.remove('active');
+          epsBox.classList.remove('hidden');
+          arlBox.classList.add('hidden');
+        };
+
+        document.getElementById('btnArlFile')!.onclick = () => arlInput.click();
+        document.getElementById('btnEpsFile')!.onclick = () => epsInput.click();
+
+        arlInput.onchange = () => {
+          arlFile = arlInput.files?.[0] || null;
+          arlPreview.textContent = arlFile
+            ? `Archivo seleccionado: ${arlFile.name}`
+            : '';
+        };
+
+        epsInput.onchange = () => {
+          epsFile = epsInput.files?.[0] || null;
+          epsPreview.textContent = epsFile
+            ? `Archivo seleccionado: ${epsFile.name}`
+            : '';
+        };
       },
-    },
-  );
-}
+
+      preConfirm: () => {
+        return { arlFile, epsFile };
+      },
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      const { arlFile, epsFile } = result.value;
+      const id = i.id;
+
+      if (!arlFile && !epsFile) return;
+
+      Swal.fire({
+        title: '¿Confirmas la carga del documento?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#2563eb',
+        cancelButtonColor: '#ef4444',
+        confirmButtonText: 'Aceptar',
+        cancelButtonText: 'Cerrar',
+        customClass: { popup: 'konekt-swal' },
+      }).then((confirm) => {
+        if (!confirm.isConfirmed) return;
+
+        Swal.fire({
+          title: 'Subiendo documento...',
+          didOpen: () => Swal.showLoading(),
+          allowOutsideClick: false,
+          customClass: { popup: 'konekt-swal' },
+        });
+
+        const tasks: Promise<any>[] = [];
+
+        if (arlFile) {
+          const fd = new FormData();
+          fd.append('file', arlFile);
+
+          tasks.push(
+            this.fileService
+              .uploadFile(fd)
+              .toPromise()
+              .then((res: any) => {
+                const fileName = res.fileName || res.filename;
+
+                return this.intershipService
+                  .updateIntership(id, {
+                    arlCertification: fileName,
+                  })
+                  .toPromise();
+              }),
+          );
+        }
+
+        if (epsFile) {
+          const fd = new FormData();
+          fd.append('file', epsFile);
+
+          tasks.push(
+            this.fileService
+              .uploadFile(fd)
+              .toPromise()
+              .then((res: any) => {
+                const fileName = res.fileName || res.filename;
+
+                return this.intershipService
+                  .updateIntership(id, {
+                    epsCertification: fileName,
+                  })
+                  .toPromise();
+              }),
+          );
+        }
+
+        Promise.all(tasks).then(() => {
+          this.loadInternships();
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Documento actualizado',
+            confirmButtonColor: '#2563eb',
+            customClass: { popup: 'konekt-swal' },
+          });
+        });
+      });
+    });
+  }
 }

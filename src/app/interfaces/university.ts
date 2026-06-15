@@ -8,6 +8,7 @@ export interface University {
   phone: string;
   user: User;
   profilePhoto?: string;
+  profilePhotoUrl?: string;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;

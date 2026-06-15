@@ -9,57 +9,103 @@
 
   <div class="cards-grid">
     <div *ngFor="let a of applications" class="card">
-      <h3>{{ a.vacancie.title }}</h3>
+      <!-- =======================
+           HEADER ESTUDIANTE
+      ======================= -->
+      <div class="student-header">
+        <div class="student-avatar">
+          <img
+            *ngIf="a.student.profilePhotoUrl; else noPhoto"
+            [src]="a.student.profilePhotoUrl"
+            alt="student photo"
+          />
+
+          <ng-template #noPhoto>
+            <div class="avatar-placeholder">
+              <i class="fa-solid fa-user"></i>
+            </div>
+          </ng-template>
+        </div>
+
+        <div class="student-info">
+          <h3>{{ a.student.fullName }}</h3>
+
+          <p>
+            <i class="fa-solid fa-graduation-cap"></i>
+            {{ a.student.career }}
+          </p>
+        </div>
+
+        <!-- VER FOTO -->
+        <button
+          class="view-photo-btn"
+          *ngIf="a.student.profilePhotoUrl"
+          (click)="openPhoto(a.student.profilePhotoUrl)"
+        >
+          <i class="fa-solid fa-eye"></i>
+        </button>
+      </div>
+
+      <!-- =======================
+           VACANTE
+      ======================= -->
+      <h3 class="vacancy-title">{{ a.vacancie.title }}</h3>
 
       <p class="description">
         {{ a.vacancie.description }}
       </p>
 
-      <div class="info-grid">
-        <div>
-          <i class="fa-solid fa-user"></i>
-          <b>Estudiante:</b> {{ a.student.fullName }}
-        </div>
-
-        <div>
-          <i class="fa-solid fa-graduation-cap"></i>
-          <b>Carrera:</b> {{ a.student.career }}
-        </div>
-
-        <div>
-          <i class="fa-solid fa-building"></i>
-          <b>Universidad:</b> {{ a.student.university.name }}
-        </div>
-
-        <div>
-          <i class="fa-solid fa-calendar"></i>
-          <b>Fecha:</b>
-          {{ a.createdAt | date: "mediumDate" : "UTC" : "es-CO" }}
-          {{ a.createdAt | date: "shortTime" : "UTC" : "es-CO" }}
-        </div>
-
-        <div>
-          <i class="fa-solid fa-circle-info"></i>
-          <b>Estado:</b>
-
-          <span
-            [ngClass]="{
-              'status-activa': a.status === 'Activa',
-              'status-suspendida': a.status === 'Suspendida',
-              'status-cancelada': a.status === 'Cerrada',
-            }"
-          >
-            {{ a.status }}
-          </span>
-        </div>
-        <div *ngIf="a.companyComments">
-          <i class="fa-solid fa-comment"></i>
-          <b>Comentario empresa:</b>
-          {{ a.companyComments }}
-        </div>
+      <!-- =======================
+           TOGGLE (FLECHA)
+      ======================= -->
+      <div class="toggle-section">
+        <button class="toggle-btn" (click)="a.expanded = !a.expanded">
+          <i
+            class="fa-solid"
+            [ngClass]="a.expanded ? 'fa-chevron-up' : 'fa-chevron-down'"
+          ></i>
+        </button>
       </div>
 
-      <div class="actions">
+      <!-- =======================
+           EXPANDIBLE
+      ======================= -->
+      <div class="extra-info" *ngIf="a.expanded">
+        <div class="info-grid">
+          <div>
+            <i class="fa-solid fa-building"></i>
+            <b>Universidad:</b> {{ a.student.university.name }}
+          </div>
+
+          <div>
+            <i class="fa-solid fa-circle-info"></i>
+            <b>Estado:</b>
+
+            <span
+              [ngClass]="{
+                'status-activa': a.status === 'Activa',
+                'status-suspendida': a.status === 'Suspendida',
+                'status-cancelada': a.status === 'Cerrada',
+              }"
+            >
+              {{ a.status }}
+            </span>
+          </div>
+          <div class="comment" *ngIf="a.companyComments">
+            <i class="fa-solid fa-comment"></i>
+            <b>Comentario empresa: </b>
+            <span>{{ a.companyComments }}</span>
+          </div>
+
+          <div>
+            <i class="fa-solid fa-calendar"></i>
+            <b>Fecha:</b>
+            {{ a.createdAt | date: "mediumDate" : "UTC" : "es-CO" }}
+          </div>
+        </div>
+
+        <!-- BOTONES -->
+       <div class="actions">
   <button class="btn-update" (click)="updateApplication(a)">
     <i class="fa-solid fa-pen-to-square"></i>
     Actualizar
@@ -69,9 +115,21 @@
     <i class="fa-solid fa-briefcase"></i>
     Contratar
   </button>
+
+  <!-- NUEVO BOTÓN -->
+  <button
+    class="btn-cv"
+    *ngIf="a.student.resume"
+   (click)="a.student.resumeUrl && openResume(a.student.resumeUrl)"
+  >
+    <i class="fa-solid fa-file-lines"></i>
+    Ver hoja de vida
+  </button>
 </div>
     </div>
   </div>
+
+  <!-- PAGINACIÓN -->
   <div class="pagination-container" *ngIf="pageCount > 1">
     <button
       class="pagination-btn"

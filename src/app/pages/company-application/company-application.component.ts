@@ -8,7 +8,9 @@ import { CommonService } from '../../services/common.service';
 import { ApplicationResponse } from '../../interfaces/application-response';
 import { ApplicationRequest } from '../../interfaces/application-request';
 import { IntershipService } from '../../services//intership.service';
-
+type ApplicationUI = ApplicationResponse & {
+  expanded: boolean;
+};
 @Component({
   selector: 'app-company-applications',
   standalone: true,
@@ -17,14 +19,13 @@ import { IntershipService } from '../../services//intership.service';
   styleUrl: './company-application.component.css',
 })
 export class CompanyApplicationComponent implements OnInit {
-  applications: ApplicationResponse[] = [];
+  applications: ApplicationUI[] = [];
   page = 1;
   total = 0;
   pageCount = 0;
   hasNext = false;
   hasPrev = false;
   statuses: any[] = [];
-
 
   constructor(
     private applicationsService: ApplicationsService,
@@ -35,7 +36,6 @@ export class CompanyApplicationComponent implements OnInit {
   ngOnInit(): void {
     this.loadApplications();
     this.loadCatalogs();
-   
   }
 
   loadCatalogs(): void {
@@ -45,42 +45,38 @@ export class CompanyApplicationComponent implements OnInit {
     });
   }
 
-loadApplications(): void {
-  const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+  loadApplications(): void {
+    const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+    const companyId = user?.profile?.id;
 
-  const companyId = user?.profile?.id;
+    this.applicationsService
+      .getApplications(this.page, companyId, undefined, true)
+      .subscribe({
+        next: (response) => {
+          this.applications = response.data.map((a) => ({
+            ...a,
+            expanded: false,
+          }));
 
-  this.applicationsService
-    .getApplications(
-      this.page,
-      companyId,
-      undefined,
-      true,
-    )
-    .subscribe({
-      next: (response) => {
-        this.applications = response.data;
+          this.total = response.total;
+          this.page = response.page;
+          this.pageCount = response.page_count;
+          this.hasNext = response.has_next;
+          this.hasPrev = response.has_prev;
+        },
 
-        console.log('Applications response:', response);
+        error: () => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudieron cargar las postulaciones',
+            confirmButtonColor: '#2563eb',
+            customClass: { popup: 'konekt-swal' },
+          });
+        },
+      });
+  }
 
-        this.total = response.total;
-        this.page = response.page;
-        this.pageCount = response.page_count;
-        this.hasNext = response.has_next;
-        this.hasPrev = response.has_prev;
-      },
-
-      error: () => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'No se pudieron cargar las postulaciones',
-          confirmButtonColor: '#2563eb',
-          customClass: { popup: 'konekt-swal' },
-        });
-      },
-    });
-}
   nextPage(): void {
     if (!this.hasNext) return;
 
@@ -280,15 +276,15 @@ loadApplications(): void {
     });
   }
   managePractice(applicationId: number): void {
-  Swal.fire({
-    title: `<span style="font-family:Segoe UI; font-weight:600;">Contratar practicante</span>`,
-    width: '750px',
-    showCloseButton: true,
-    customClass: {
-      popup: 'konekt-swal',
-    },
+    Swal.fire({
+      title: `<span style="font-family:Segoe UI; font-weight:600;">Contratar practicante</span>`,
+      width: '750px',
+      showCloseButton: true,
+      customClass: {
+        popup: 'konekt-swal',
+      },
 
-    html: `
+      html: `
     <style>
       .swal-form {
         display: grid;
@@ -343,60 +339,82 @@ loadApplications(): void {
     </div>
   `,
 
-    showCancelButton: true,
-    confirmButtonText: 'Guardar',
-    cancelButtonText: 'Cancelar',
-    confirmButtonColor: '#2563eb',
-    cancelButtonColor: '#ef4444',
+      showCancelButton: true,
+      confirmButtonText: 'Guardar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#2563eb',
+      cancelButtonColor: '#ef4444',
 
-    preConfirm: () => {
-      const startDate = (document.getElementById('startDate') as HTMLInputElement).value;
-      const endDate = (document.getElementById('endDate') as HTMLInputElement).value;
+      preConfirm: () => {
+        const startDate = (
+          document.getElementById('startDate') as HTMLInputElement
+        ).value;
+        const endDate = (document.getElementById('endDate') as HTMLInputElement)
+          .value;
 
-      if (!startDate || !endDate) {
-        Swal.showValidationMessage('Todos los campos son obligatorios');
-        return false;
-      }
+        if (!startDate || !endDate) {
+          Swal.showValidationMessage('Todos los campos son obligatorios');
+          return false;
+        }
 
-      return {
-        status: 'Activa', // 👈 fijo por backend
-        startDate,
-        endDate,
-        applicationId,
-      };
-    },
-  }).then((result) => {
-    if (!result.isConfirmed || !result.value) return;
-
-    Swal.fire({
-      title: 'Guardando...',
-      allowOutsideClick: false,
-      didOpen: () => Swal.showLoading(),
-      customClass: { popup: 'konekt-swal' },
-    });
-
-    this.intershipService.createIntership(result.value).subscribe({
-      next: () => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Contrada/o',
-          confirmButtonColor: '#2563eb',
-          customClass: { popup: 'konekt-swal' },
-        });
-
-        // ❌ no reload si no quieres
+        return {
+          status: 'Activa', // 👈 fijo por backend
+          startDate,
+          endDate,
+          applicationId,
+        };
       },
+    }).then((result) => {
+      if (!result.isConfirmed || !result.value) return;
 
-      error: () => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'No se pudo gestionar la práctica',
-          confirmButtonColor: '#2563eb',
-          customClass: { popup: 'konekt-swal' },
-        });
-      },
+      Swal.fire({
+        title: 'Guardando...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+        customClass: { popup: 'konekt-swal' },
+      });
+
+      this.intershipService.createIntership(result.value).subscribe({
+        next: () => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Contrada/o',
+            confirmButtonColor: '#2563eb',
+            customClass: { popup: 'konekt-swal' },
+          });
+
+          // ❌ no reload si no quieres
+        },
+
+        error: () => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo gestionar la práctica',
+            confirmButtonColor: '#2563eb',
+            customClass: { popup: 'konekt-swal' },
+          });
+        },
+      });
     });
-  });
-}
+  }
+  openPhoto(url: string): void {
+    window.open(url, '_blank');
+  }
+  openResume(url?: string): void {
+    if (!url) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Sin hoja de vida',
+        text: 'El estudiante no ha subido su hoja de vida',
+        confirmButtonColor: '#2563eb',
+        customClass: {
+          popup: 'konekt-swal',
+        },
+      });
+      return;
+    }
+
+    window.open(url, '_blank');
+  } 
 }

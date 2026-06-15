@@ -20,10 +20,36 @@
     <div class="cards-grid">
       <div *ngFor="let p of partnerships" class="card">
         <!-- UNIVERSITY -->
-        <h3>
-          <i class="fa-solid fa-graduation-cap"></i>
-          {{ p.university.name || "Universidad" }}
-        </h3>
+       <div class="university-header">
+  <div class="university-avatar">
+    <img
+      *ngIf="p.university.profilePhotoUrl; else noUniLogo"
+      [src]="p.university.profilePhotoUrl"
+      alt="university logo"
+    />
+
+    <ng-template #noUniLogo>
+      <div class="avatar-placeholder">
+        <i class="fa-solid fa-building-columns"></i>
+      </div>
+    </ng-template>
+  </div>
+
+  <h3>
+    <i class="fa-solid fa-graduation-cap"></i>
+    {{ p.university.name || "Universidad" }}
+  </h3>
+
+  <!-- BOTÓN VER -->
+  <button
+    class="btn-view-uni"
+    *ngIf="p.university.profilePhotoUrl"
+    (click)="openUniversityLogo(p.university.profilePhotoUrl)"
+    title="Ver logo"
+  >
+    <i class="fa-solid fa-eye"></i>
+  </button>
+</div>
 
         <!-- COMMENT -->
         <p *ngIf="p.comment?.trim()" class="comment">

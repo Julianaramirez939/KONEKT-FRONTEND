@@ -170,3 +170,98 @@
 .btn-manage i {
   color: white;
 }
+.student-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+.student-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.student-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  font-size: 18px;
+  color: #64748b;
+}
+
+.student-info h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.student-info p {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+}
+.view-photo-btn {
+  margin-left: auto;
+  background: #2563eb;
+  border: none;
+  color: white;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.view-photo-btn:hover {
+  background: #1d4ed8;
+  transform: scale(1.05);
+}
+.toggle-section {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.toggle-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #2563eb;
+  font-size: 18px;
+}
+
+.extra-info {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #e2e8f0;
+}
+.btn-cv {
+  background: #7c3aed;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.btn-cv:hover {
+  background: #6d28d9;
+  transform: translateY(-1px);
+}

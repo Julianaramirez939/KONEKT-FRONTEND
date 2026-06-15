@@ -1,4 +1,4 @@
-<app-navbar [role]="'company'"></app-navbar>
+
 
 <div class="updates-page">
   <div class="list-container">
@@ -12,7 +12,51 @@
     <div class="empty" *ngIf="updates.length === 0">
       No hay actualizaciones registradas
     </div>
+<!-- DOCUMENTOS DEL PRACTICANTE -->
+<div class="documents-card" *ngIf="internshipInfo">
+  <h3>
+    <i class="fa-solid fa-folder-open"></i>
+    Documentos del practicante
+  </h3>
 
+  <div class="docs-grid">
+
+    <!-- ARL -->
+    <div class="doc-item">
+      <div class="doc-title">Certificado ARL</div>
+
+      <button
+        class="btn-view-doc"
+        *ngIf="internshipInfo.arlCertificationUrl"
+        (click)="openFile(internshipInfo.arlCertificationUrl)"
+      >
+        Ver documento
+      </button>
+
+      <span *ngIf="!internshipInfo.arlCertificationUrl" class="empty">
+        Sin archivo
+      </span>
+    </div>
+
+    <!-- EPS -->
+    <div class="doc-item">
+      <div class="doc-title">Certificado EPS</div>
+
+      <button
+        class="btn-view-doc"
+        *ngIf="internshipInfo.epsCertificationUrl"
+        (click)="openFile(internshipInfo.epsCertificationUrl)"
+      >
+        Ver documento
+      </button>
+
+      <span *ngIf="!internshipInfo.epsCertificationUrl" class="empty">
+        Sin archivo
+      </span>
+    </div>
+
+  </div>
+</div>
     <div class="cards-grid">
       <div *ngFor="let update of updates" class="card">
         <h3>
