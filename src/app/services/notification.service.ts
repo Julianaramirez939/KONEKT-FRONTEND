@@ -84,7 +84,7 @@ export class NotificationService {
   markAllAsRead(): Observable<any> {
     return this.http
       .patch<any>(
-        `${this.endpoint}/unread/count`,
+        `${this.endpoint}/read-all`,
         {},
         {
           headers: this.getHeaders(),

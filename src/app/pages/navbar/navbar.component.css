@@ -148,7 +148,6 @@
   z-index: 99999;
 }
 
-/* Scrollbar */
 .notifications::-webkit-scrollbar {
   width: 6px;
 }
@@ -394,4 +393,4 @@
     align-items: flex-start;
     gap: 8px;
   }
-} 
+}
